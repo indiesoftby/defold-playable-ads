@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0"
+    />
+    <title>{{DEFOLD_APP_TITLE}}</title>
+    <style>
+      body, html {
+        background-color: #ffffff; /* Change me: background color of the page. This is the color that the user will see first. */
+        font-family: Arial, sans-serif;
+        margin: 0;
+        overflow: hidden;
+        padding: 0;
+      }
+
+      body {
+        -webkit-touch-callout: none;
+        -webkit-user-select: none;
+        -khtml-user-select: none;
+        -moz-user-select: none;
+        -ms-user-select: none;
+        user-select: none;
+      }
+
+      .canvas-app-container {
+        line-height: 0;
+        overflow: hidden;
+        position: relative;
+      }
+
+      .canvas-app-canvas {
+        outline: none;
+        height: 100%;
+        width: 100%;
+      }
+
+      /* Hide the progress because we don't need it. */
+      .canvas-app-progress {
+        display: none;
+      }
+    </style>
+
+    {{{DEFOLD_DEV_HEAD}}}
+  </head>
+  <body>
+    <div id="app-container" class="canvas-app-container">
+      <canvas
+        id="canvas"
+        class="canvas-app-canvas"
+        tabindex="1"
+        width="{{DEFOLD_DISPLAY_WIDTH}}"
+        height="{{DEFOLD_DISPLAY_HEIGHT}}"
+      ></canvas>
+    </div>
+
+    <script>
+      function resize_canvas() {
+        var container = document.getElementById("app-container");
+        var canvas = document.getElementById("canvas");
+
+        // Tip: set dpr = 1 to make the game run faster on high dpi devices with low-end hardware.
+        var dpr = window.devicePixelRatio || 1;
+
+        var width = window.innerWidth;
+        var height = window.innerHeight;
+
+        var set_width = width;
+
+        // Uncomment this to use the aspect ratio of the game:
+        // var keep_ratio = {{DEFOLD_DISPLAY_WIDTH}} / {{DEFOLD_DISPLAY_HEIGHT}};
+        // set_width = (height * keep_ratio) | 0;
+
+        container.style.marginLeft = Math.max(0, ((width - set_width) / 2) | 0) + "px";
+
+        container.style.width = set_width + "px";
+        container.style.height = height + "px";
+        canvas.width = set_width * dpr;
+        canvas.height = height * dpr;
+      };
+
+      window.addEventListener("resize", resize_canvas, false);
+      window.addEventListener("orientationchange", resize_canvas, false);
+
+      resize_canvas();
+
+      var splash_image = "{{DEFOLD_SPLASH_IMAGE}}";
+      if (splash_image) {
+        var canvas = document.getElementById("canvas");
+        canvas.style.background = "no-repeat center url(\"" + splash_image + "\")";
+        // canvas.style.backgroundSize = "cover";
+      }
+    </script>
+
+    <script data-src="{{DEFOLD_BINARY_PREFIX}}_archive.js" embed></script>
+    <script>
+      var InternalDataHttpRequest = function() {
+        this.responseType = "text";
+      };
+      InternalDataHttpRequest.prototype.open = function(method, url, pass) {
+        this.url = url;
+      };
+      InternalDataHttpRequest.prototype.send = function(pass) {
+        if (!embed_archive_data[this.url]) {
+          this.onerror();
+        } else {
+          if (this.responseType == "text") {
+            this.responseText = atob(embed_archive_data[this.url]);
+            this.onload();
+          } else {
+            var raw = atob(embed_archive_data[this.url]);
+            var rawLength = raw.length;
+            var data = new Uint8Array(new ArrayBuffer(rawLength));
+            for(i = 0; i < rawLength; i++) {
+              data[i] = raw.charCodeAt(i);
+            }
+            this.onprogress({
+              lengthComputable: true,
+              total: rawLength,
+              loaded: rawLength
+            });
+            this.response = data;
+            this.onload();
+          }
+        }
+      };
+    </script>
+
+    {{{DEFOLD_DEV_INLINE}}}
+    <script src="dmloader.js" embed></script>
+
+    <script>
+      var extra_params = {
+        archive_location_filter: function(path) {
+          return "{{DEFOLD_ARCHIVE_LOCATION_PREFIX}}" + path + "{{DEFOLD_ARCHIVE_LOCATION_SUFFIX}}";
+        },
+        {{#HAS_DEFOLD_ENGINE_ARGUMENTS}}
+        engine_arguments: ["{{DEFOLD_ENGINE_ARGUMENTS}}"],
+        {{/HAS_DEFOLD_ENGINE_ARGUMENTS}}
+        custom_heap_size: {{DEFOLD_HEAP_SIZE}},
+        disable_context_menu: true
+      };
+
+      Module["onRuntimeInitialized"] = function() {
+        Module.runApp("canvas", extra_params);
+      };
+    </script>
+    <script data-src="pako_inflate.min.js" embed></script>
+    <script src="{{DEFOLD_BINARY_PREFIX}}_asmjs.js" embed="compress"></script>
+  </body>
+</html>

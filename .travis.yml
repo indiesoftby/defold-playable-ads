@@ -1,0 +1,20 @@
+language: node_js
+node_js:
+  - "node"
+cache: npm
+
+before_script:
+  - npm install -g gulp-cli
+
+script:
+  - gulp
+  - mkdir ghpages
+  - cp build/bundle/js-web/playable_ads/playable_ads.html ghpages/index.html
+
+deploy:
+  provider: pages
+  skip_cleanup: true
+  github_token: $GITHUB_TOKEN
+  local_dir: ghpages
+  on:
+    branch: master

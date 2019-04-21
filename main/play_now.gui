@@ -1,7 +1,7 @@
-script: "/main/main.gui_script"
+script: "/main/play_now.gui_script"
 fonts {
-  name: "button"
-  font: "/main/button.font"
+  name: "vera_large"
+  font: "/main/vera_large.font"
 }
 textures {
   name: "main"
@@ -100,8 +100,8 @@ nodes {
   }
   type: TYPE_TEXT
   blend_mode: BLEND_MODE_ALPHA
-  text: "DOWNLOAD NOW"
-  font: "button"
+  text: "Play Now"
+  font: "vera_large"
   id: "text"
   xanchor: XANCHOR_NONE
   yanchor: YANCHOR_NONE

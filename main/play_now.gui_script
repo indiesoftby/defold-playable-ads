@@ -15,6 +15,12 @@ end
 function on_message(self, message_id, message, sender)
 	if message_id == hash("init_input") then
 		process_input(self, nil, { x = -99999, y = -99999 }) -- to force update of button images
+	elseif message_id == hash("transition_in") then
+		local node = gui.get_node("btn_cta")
+
+		gui.set_scale(node, vmath.vector3(2, 2, 1))
+		gui.animate(node, "scale.x", 1, gui.EASING_OUTBOUNCE, 1)
+		gui.animate(node, "scale.y", 1, gui.EASING_OUTBOUNCE, 1)
 	end
 end
 
@@ -25,7 +31,7 @@ end
 function call_to_action(self)
 	if html5 then
 		-- html5.run("alert('Yes!')")
-		html5.run("FbPlayableAd.onCTAClick();")
+		html5.run("try { FbPlayableAd.onCTAClick(); } catch (e) { console.error(e); }")
 	end
 end
 

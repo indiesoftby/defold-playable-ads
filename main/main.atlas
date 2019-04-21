@@ -1,9 +1,12 @@
 images {
-  image: "/assets/app_icons/icon_180.png"
+  image: "/assets/images/logo.png"
 }
 images {
-  image: "/assets/background.png"
+  image: "/assets/images/button_out.png"
+}
+images {
+  image: "/assets/images/button_over.png"
 }
 margin: 0
-extrude_borders: 0
+extrude_borders: 2
 inner_padding: 0

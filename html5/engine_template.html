@@ -94,6 +94,8 @@
       }
     </script>
 
+    <script data-src="pako_inflate.min.js" embed></script>
+
     <script data-src="{{DEFOLD_BINARY_PREFIX}}_archive.js" embed></script>
     <script>
       var InternalDataHttpRequest = function() {
@@ -147,7 +149,7 @@
         Module.runApp("canvas", extra_params);
       };
     </script>
-    <script data-src="pako_inflate.min.js" embed></script>
+
     <script src="{{DEFOLD_BINARY_PREFIX}}_asmjs.js" embed="compress"></script>
   </body>
 </html>

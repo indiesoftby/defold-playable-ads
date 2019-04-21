@@ -6,12 +6,12 @@ A [playable ad](https://learn.g2crowd.com/playable-ads) is an interactive advert
 
 [Facebook specifications for Playable Ads](https://www.facebook.com/business/help/412951382532338?helpref=faq_content) require that there be a single file for playable ad that contains all assets as part of that single HTML file and assets should be data uri compressed. Also playable asset size should be less than 2MB.
 
+[**Play the demo**](https://aglitchman.github.io/defold-playable-ads/) project online. Please note that it does not use any external resources as required.
+
 This project contains the [Gulp](https://gulpjs.com/) tasks, which:
 1. Downloads [bob.jar](https://d.defold.com/stable/).
 2. Builds the project for the HTML5 platform using `bob.jar`.
 3. Combines all resources into **one large HTML file**. The asm.js binary of the Defold engine is compressed using zlib deflate.
-
-[**Play the demo**](https://aglitchman.github.io/defold-playable-ads/) project online. Please note that it does not use any external resources as required.
 
 Note: this project was created from the "mobile" project template. For this reason Android and iOS icons are set, iOS launch images (blank ones) are set.
 

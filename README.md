@@ -15,7 +15,7 @@ This project was created from the "mobile" project template.
 
 You will need Node.js, Java and Gulp CLI installed on your environment.
 
-### WSL and Linux
+### Ubuntu/Debian or Windows Subsystem for Linux (WSL)
 
 ```
 sudo apt install -y --no-install-recommends java nodejs npm
@@ -24,6 +24,8 @@ npm install --global gulp-cli
 ```
 
 ### macOS
+
+Install [brew](https://brew.sh/) and paste that in a macOS Terminal prompt:
 
 ```
 brew install node
@@ -42,7 +44,9 @@ npm install
 
 ## Usage
 
-Run the `gulp` command to start the build process.
+Run the `gulp` command to start the build process:
+
+![Command line](docs/gulp.gif)
 
 The resulting HTML file is located at `/build/bundle/js-web/playable_ads/playable_ads.html`.
 

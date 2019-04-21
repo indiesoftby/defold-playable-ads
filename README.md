@@ -9,7 +9,7 @@ This project contains the [Gulp](https://gulpjs.com/) tasks, which:
 2. Builds the project for the HTML5 platform using `bob.jar`.
 3. Combines all resources into **one large HTML file**. The asm.js binary of the Defold engine is compressed using zlib deflate.
 
-Note: this project was created from the "mobile" project template. 
+Note: this project was created from the "mobile" project template. For this reason Android and iOS icons are set, iOS launch images (blank ones) are set.
 
 ## Required Prerequisites
 

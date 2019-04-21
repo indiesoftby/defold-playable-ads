@@ -1,30 +1,73 @@
 function init(self)
-	-- Add initialization code here
-	-- Remove this function if not needed
+	msg.post(".", "acquire_input_focus")
+
+	self.btn_is_over = {}
+	msg.post("#", "init_input")
 end
 
 function final(self)
-	-- Add finalization code here
-	-- Remove this function if not needed
+	msg.post(".", "release_input_focus")
 end
 
 function update(self, dt)
-	-- Add update code here
-	-- Remove this function if not needed
 end
 
 function on_message(self, message_id, message, sender)
-	-- Add message-handling code here
-	-- Remove this function if not needed
+	if message_id == hash("init_input") then
+		process_input(self, nil, { x = -99999, y = -99999 }) -- to force update of button images
+	end
 end
 
 function on_input(self, action_id, action)
-	-- Add input-handling code here
-	-- Remove this function if not needed
+	process_input(self, action_id, action)
 end
 
-function call_to_action()
-	if html5.run then
+function call_to_action(self)
+	if html5 then
+		-- html5.run("alert('Yes!')")
 		html5.run("FbPlayableAd.onCTAClick();")
+	end
+end
+
+function process_input(self, action_id, action)
+	handle_btn(self, "btn_cta", "button", 1, action_id, action, call_to_action)
+end
+
+function handle_btn(self, node_id, img_prefix, tab_index, action_id, action, cb)
+	local btn_out_img = img_prefix .. "_out"
+	local btn_over_img = img_prefix .. "_over"
+	local force_update = false
+
+	if action.x == -99999 then
+		force_update = true
+	end
+
+	local node = gui.get_node(node_id)
+	if action_id == hash("click") and action.pressed then
+		if gui.pick_node(node, action.x, action.y) then 
+			gui.play_flipbook(node, btn_out_img)
+		end
+	elseif action_id == hash("click") and action.released then
+		if self.btn_is_over[node_id] then
+			gui.play_flipbook(node, btn_over_img)
+		end
+
+		if gui.pick_node(node, action.x, action.y) then
+			if cb ~= nil then
+				cb(self, node_id, action_id, action)
+			end
+		end
+	else
+		if gui.pick_node(node, action.x, action.y) then 
+			if not self.btn_is_over[node_id] or force_update then
+				gui.play_flipbook(node, btn_over_img)
+				self.btn_is_over[node_id] = true
+			end
+		else
+			if self.btn_is_over[node_id] or force_update then
+				gui.play_flipbook(node, btn_out_img)
+				self.btn_is_over[node_id] = false
+			end
+		end
 	end
 end

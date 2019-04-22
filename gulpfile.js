@@ -5,12 +5,12 @@ const fancyLog = require("fancy-log");
 const fs = require("fs");
 const htmlmin = require("gulp-htmlmin");
 const matchAll = require("string.prototype.matchall");
-const pako = require("pako");
 const prettyBytes = require("pretty-bytes");
 const rename = require("gulp-rename");
 const replace = require("gulp-replace");
+const sevenBin = require("7zip-bin");
 const through2 = require("through2");
-const spawn = require("child_process").spawn;
+const { spawn } = require("child_process");
 const Vinyl = require("vinyl");
 
 const projectTitle = "playable_ads";
@@ -21,6 +21,45 @@ const buildDir = "build";
 const archiveDir = "archive";
 const bundleJsWebPath = buildDir + "/bundle/js-web";
 const bobJarPath = buildDir + "/bob.jar";
+
+//
+// Helper functions
+//
+
+function logFilesize(filename, type, size) {
+  fancyLog(
+    "* " +
+      chalk.cyan(filename) +
+      type +
+      " size " +
+      chalk.magenta(size + " B (" + prettyBytes(size) + ")")
+  );
+}
+
+function sevenDeflate(filepath, cb) {
+  let deflated = Buffer.alloc(0);
+  const cmd = spawn(
+    sevenBin.path7za,
+    ["a", "dummy.gz", "-tgzip", "-mx=9", "-so", filepath],
+    { stdio: ["inherit", "pipe", "inherit"] }
+  );
+  cmd.stdout.on("data", function(data) {
+    deflated = Buffer.concat([deflated, data]);
+  });
+  cmd.on("close", function(code) {
+    if (code != 0) {
+      throw "Can't deflate the file: " + filepath;
+    }
+    cb(deflated);
+  });
+  cmd.on("error", function(err) {
+    console.error(err);
+  });
+}
+
+//
+// Gulp tasks
+//
 
 function javaIsInstalled(cb) {
   var cmd = spawn("java", ["-version"]);
@@ -49,7 +88,7 @@ function downloadBobJar(cb) {
 }
 
 function checkBobJar(cb) {
-  var cmd = spawn("java", ["-jar", bobJarPath, "--version"], {
+  const cmd = spawn("java", ["-jar", bobJarPath, "--version"], {
     stdio: "inherit"
   });
   cmd.on("close", function(code) {
@@ -64,7 +103,7 @@ function checkBobJar(cb) {
 }
 
 function buildGame(cb) {
-  var cmd = spawn(
+  const cmd = spawn(
     "java",
     [
       "-jar",
@@ -108,11 +147,7 @@ function combineFilesToBase64(out, pathPrefix) {
       }
 
       var archiveFilename = pathPrefix + file.relative;
-      fs.readFile(file.path, function(err, data) {
-        if (err) {
-          throw err;
-        }
-        const deflated = pako.deflate(data, { level: 8 });
+      sevenDeflate(file.path, function(deflated) {
         const compressed = Buffer.from(deflated).toString("base64");
         combinedFiles[archiveFilename] = compressed;
         cb();
@@ -143,16 +178,6 @@ function archiveToBase64() {
   return src(dir + "/" + archiveDir + "/*")
     .pipe(combineFilesToBase64(projectTitle + "_archive.js", archiveDir + "/"))
     .pipe(dest(dir + "/"));
-}
-
-function logFilesize(filename, type, size) {
-  fancyLog(
-    "* " +
-      chalk.cyan(filename) +
-      type +
-      " size " +
-      chalk.magenta(size + " B (" + prettyBytes(size) + ")")
-  );
 }
 
 function embedImages(dir) {
@@ -191,39 +216,50 @@ function embedJs(dir) {
     if (file.isBuffer()) {
       const input = file.contents.toString();
       let output = input;
-      let matches = matchAll(
+      const matches = matchAll(
         input,
         /<script (data-)?src="(.+?)" embed(="(compress)")?><\/script>/g
       );
-      for (const match of matches) {
-        const searchMatch = match[0];
-        const filename = match[2];
-        const fspath = dir + "/" + filename;
-        const compress = match[4] == "compress";
 
-        if (!compress) {
-          const filetext = fs.readFileSync(fspath, "utf-8");
-          const replacement = "<script>" + filetext + "\n</script>";
-          output = output.split(searchMatch).join(replacement);
+      const promises = Array.from(matches).map(function(match) {
+        return new Promise(function(cb) {
+          const searchMatch = match[0];
+          const filename = match[2];
+          const fspath = dir + "/" + filename;
+          const compress = match[4] == "compress";
 
-          logFilesize(filename, "", replacement.length);
-        } else {
-          const filetext = fs.readFileSync(fspath, "utf-8");
-          const deflated = pako.deflate(filetext, { level: 8 });
-          const compressed = Buffer.from(deflated).toString("base64");
-          const replacement =
-            "<script>eval(pako.inflate(atob('" +
-            compressed +
-            "'), { to: 'string' }));</script>";
-          output = output.split(searchMatch).join(replacement);
+          if (!compress) {
+            const filetext = fs.readFileSync(fspath, "utf-8");
+            const replacement = "<script>" + filetext + "\n</script>";
+            output = output.split(searchMatch).join(replacement);
 
-          logFilesize(filename, " compressed", deflated.length);
-          logFilesize(filename, " encoded", replacement.length);
-        }
-      }
-      file.contents = Buffer.from(output);
+            logFilesize(filename, "", replacement.length);
+
+            cb();
+          } else {
+            sevenDeflate(fspath, function(deflated) {
+              const compressed = Buffer.from(deflated).toString("base64");
+              const replacement =
+                "<script>eval(pako.inflate(atob('" +
+                compressed +
+                "'), { to: 'string' }));</script>";
+              output = output.split(searchMatch).join(replacement);
+              logFilesize(filename, " compressed", deflated.length);
+              logFilesize(filename, " encoded", replacement.length);
+              cb();
+            });
+          }
+        });
+      });
+
+      Promise.all(promises).then(function() {
+        file.contents = Buffer.from(output);
+
+        cb(null, file);
+      });
+    } else {
+      cb(null, file);
     }
-    cb(null, file);
   });
 }
 

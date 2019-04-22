@@ -113,14 +113,14 @@ function combineFilesToBase64(out, pathPrefix) {
           throw err;
         }
         const deflated = pako.deflate(data, { level: 8 });
-        const compressed = new Buffer(deflated).toString("base64");
+        const compressed = Buffer.from(deflated).toString("base64");
         combinedFiles[archiveFilename] = compressed;
         cb();
       });
     },
     function(cb) {
       var prefix = "var embed_archive_data = ";
-      var buffer = new Buffer(
+      var buffer = Buffer.from(
         prefix + JSON.stringify(combinedFiles, null, "  ")
       );
       var fileListFile = new Vinyl({
@@ -174,7 +174,7 @@ function embedImages(dir) {
           "data:image/" +
           match[3] +
           ";base64," +
-          new Buffer(imageData).toString("base64");
+          Buffer.from(imageData).toString("base64");
         const replacement = match[1] + dataUriData + match[4];
         output = output.split(searchMatch).join(replacement);
 
@@ -210,7 +210,7 @@ function embedJs(dir) {
         } else {
           const filetext = fs.readFileSync(fspath, "utf-8");
           const deflated = pako.deflate(filetext, { level: 8 });
-          const compressed = new Buffer(deflated).toString("base64");
+          const compressed = Buffer.from(deflated).toString("base64");
           const replacement =
             "<script>eval(pako.inflate(atob('" +
             compressed +

@@ -108,11 +108,13 @@ function combineFilesToBase64(out, pathPrefix) {
       }
 
       var archiveFilename = pathPrefix + file.relative;
-      fs.readFile(file.path, { encoding: "base64" }, (err, data) => {
+      fs.readFile(file.path, function(err, data) {
         if (err) {
           throw err;
         }
-        combinedFiles[archiveFilename] = data;
+        const deflated = pako.deflate(data, { level: 8 });
+        const compressed = new Buffer(deflated).toString("base64");
+        combinedFiles[archiveFilename] = compressed;
         cb();
       });
     },

@@ -98,7 +98,7 @@
 
     <script data-src="pako_inflate.min.js" embed></script>
 
-    <script data-src="{{DEFOLD_BINARY_PREFIX}}_archive.js" embed="compress"></script>
+    <script data-src="{{DEFOLD_BINARY_PREFIX}}_archive.js" embed></script>
     <script>
       var InternalDataHttpRequest = function() {
         this.responseType = "text";
@@ -111,19 +111,14 @@
           this.onerror();
         } else {
           if (this.responseType == "text") {
-            this.responseText = atob(embed_archive_data[this.url]);
+            this.responseText = pako.inflate(atob(embed_archive_data[this.url]), { to: "string" });
             this.onload();
           } else {
-            var raw = atob(embed_archive_data[this.url]);
-            var rawLength = raw.length;
-            var data = new Uint8Array(new ArrayBuffer(rawLength));
-            for(i = 0; i < rawLength; i++) {
-              data[i] = raw.charCodeAt(i);
-            }
+            var data = pako.inflate(atob(embed_archive_data[this.url]));
             this.onprogress({
               lengthComputable: true,
-              total: rawLength,
-              loaded: rawLength
+              total: data.length,
+              loaded: data.length
             });
             this.response = data;
             this.onload();

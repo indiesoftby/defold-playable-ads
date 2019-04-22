@@ -1,13 +1,15 @@
 const { series, src, dest } = require("gulp");
+const chalk = require("chalk");
 const download = require("gulp-download-stream");
+const fancyLog = require("fancy-log");
 const fs = require("fs");
 const htmlmin = require("gulp-htmlmin");
 const matchAll = require("string.prototype.matchall");
 const pako = require("pako");
+const prettyBytes = require("pretty-bytes");
 const rename = require("gulp-rename");
 const replace = require("gulp-replace");
 const through2 = require("through2");
-const size = require("gulp-size");
 const spawn = require("child_process").spawn;
 const Vinyl = require("vinyl");
 
@@ -141,6 +143,16 @@ function archiveToBase64() {
     .pipe(dest(dir + "/"));
 }
 
+function logFilesize(filename, type, size) {
+  fancyLog(
+    "* " +
+      chalk.cyan(filename) +
+      type +
+      " size " +
+      chalk.magenta(size + " B (" + prettyBytes(size) + ")")
+  );
+}
+
 function embedImages(dir) {
   return through2.obj(function(file, _, cb) {
     if (file.isBuffer()) {
@@ -163,6 +175,8 @@ function embedImages(dir) {
           new Buffer(imageData).toString("base64");
         const replacement = match[1] + dataUriData + match[4];
         output = output.split(searchMatch).join(replacement);
+
+        logFilesize(filename, " encoded", replacement.length);
       }
       file.contents = Buffer.from(output);
     }
@@ -189,19 +203,32 @@ function embedJs(dir) {
           const filetext = fs.readFileSync(fspath, "utf-8");
           const replacement = "<script>" + filetext + "\n</script>";
           output = output.split(searchMatch).join(replacement);
+
+          logFilesize(filename, "", replacement.length);
         } else {
           const filetext = fs.readFileSync(fspath, "utf-8");
-          const compressed = new Buffer(
-            pako.deflate(filetext, { level: 8 })
-          ).toString("base64");
+          const deflated = pako.deflate(filetext, { level: 8 });
+          const compressed = new Buffer(deflated).toString("base64");
           const replacement =
             "<script>eval(pako.inflate(atob('" +
             compressed +
             "'), { to: 'string' }));</script>";
           output = output.split(searchMatch).join(replacement);
+
+          logFilesize(filename, " compressed", deflated.length);
+          logFilesize(filename, " encoded", replacement.length);
         }
       }
       file.contents = Buffer.from(output);
+    }
+    cb(null, file);
+  });
+}
+
+function printSize(type) {
+  return through2.obj(function(file, _, cb) {
+    if (file.isBuffer()) {
+      logFilesize(file.relative, type, file.contents.length);
     }
     cb(null, file);
   });
@@ -226,6 +253,7 @@ function bundlePlayableAds() {
         "InternalDataHttpRequest"
       )
     )
+    .pipe(rename(projectTitle + ".html"))
     .pipe(
       htmlmin({
         collapseWhitespace: true,
@@ -234,8 +262,7 @@ function bundlePlayableAds() {
         minifyJS: true
       })
     )
-    .pipe(rename(projectTitle + ".html"))
-    .pipe(size({ title: "Resulting filesize:", showFiles: true }))
+    .pipe(printSize(" resulting"))
     .pipe(dest(dir));
 }
 

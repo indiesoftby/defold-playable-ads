@@ -86,12 +86,14 @@
 
       resize_canvas();
 
+      // Comment or delete following lines to remove a splash image:
       var splash_image = "{{DEFOLD_SPLASH_IMAGE}}";
       if (splash_image) {
         var canvas = document.getElementById("canvas");
         canvas.style.background = "no-repeat center url(\"" + splash_image + "\")";
         // canvas.style.backgroundSize = "cover";
       }
+      // ---
     </script>
 
     <script data-src="pako_inflate.min.js" embed></script>
@@ -148,6 +150,21 @@
       Module["onRuntimeInitialized"] = function() {
         Module.runApp("canvas", extra_params);
       };
+    </script>
+
+    <script>
+      // The playable code should use the Javascript function FbPlayableAd.onCTAClick() when a person interacts with the call-to-action in the ad. Facebook uses the code to handle navigation to the correct app store page for the app.
+      // An example of how to use it in your Defold game:
+      //    if html5 then
+      //      html5.run("FbPlayableAd_onCTAClick()")
+      //    end
+      function FbPlayableAd_onCTAClick() {
+        try {
+          FbPlayableAd.onCTAClick();
+        } catch (e) {
+          console.error(e);
+        }
+      }
     </script>
 
     <script src="{{DEFOLD_BINARY_PREFIX}}_asmjs.js" embed="compress"></script>

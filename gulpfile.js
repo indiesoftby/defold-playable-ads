@@ -4,6 +4,7 @@ const download = require("gulp-download-stream");
 const fancyLog = require("fancy-log");
 const fs = require("fs");
 const htmlmin = require("gulp-htmlmin");
+const ini = require("ini");
 const matchAll = require("string.prototype.matchall");
 const prettyBytes = require("pretty-bytes");
 const rename = require("gulp-rename");
@@ -13,7 +14,7 @@ const through2 = require("through2");
 const { spawn } = require("child_process");
 const Vinyl = require("vinyl");
 
-const projectTitle = "playable_ads";
+let projectTitle = "playable_ads";
 const bobJarDownloadUrl =
   "https://d.defold.com/archive/e05232d70b8a6d8c69fcfe968f01b876090ffa06/bob/bob.jar";
 
@@ -60,6 +61,15 @@ function sevenDeflate(filepath, cb) {
 //
 // Gulp tasks
 //
+
+function parseProjectConfig(cb) {
+  const config = ini.parse(fs.readFileSync("game.project", "utf-8"));
+  if (config.project && config.project.title) {
+    projectTitle = config.project.title;
+  }
+  fancyLog("* Project title is '" + chalk.cyan(projectTitle) + "'");
+  cb();
+}
 
 function javaIsInstalled(cb) {
   var cmd = spawn("java", ["-version"]);
@@ -305,6 +315,7 @@ function bundlePlayableAds() {
 }
 
 exports.default = series(
+  parseProjectConfig,
   javaIsInstalled,
   downloadBobJar,
   checkBobJar,

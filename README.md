@@ -55,3 +55,14 @@ Run the `gulp` command to start the build process:
 The resulting HTML file is located at `/build/bundle/js-web/playable_ads/playable_ads.html`.
 
 This project uses `bob.jar` version `1.2.151`. Change the download link `bobJarDownloadUrl` in `gulpfile.js` to use other version.
+
+### In Your Project
+
+1. Copy these files to your project root folder:
+```
+gulpfile.js
+html5/engine_template.html
+package.json
+```
+2. Set `html5/engine_template.html` as custom HTML template in your [game project settings](https://www.defold.com/manuals/html5/). Also add path `/node_modules` to your `.gitignore`.
+3. Run `npm install`, then `gulp`.

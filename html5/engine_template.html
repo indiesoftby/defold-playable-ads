@@ -6,7 +6,7 @@
       name="viewport"
       content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0"
     />
-    <title>{{DEFOLD_APP_TITLE}}</title>
+    <title>{{project.title}} {{project.version}}</title>
     <style>
       body, html {
         background-color: #ffffff; /* Change me: background color of the page. This is the color that the user will see first. */
@@ -51,8 +51,8 @@
         id="canvas"
         class="canvas-app-canvas"
         tabindex="1"
-        width="{{DEFOLD_DISPLAY_WIDTH}}"
-        height="{{DEFOLD_DISPLAY_HEIGHT}}"
+        width="{{display.width}}"
+        height="{{display.height}}"
       ></canvas>
     </div>
 
@@ -70,7 +70,7 @@
         var set_width = width;
 
         // Uncomment this to use the aspect ratio of the game:
-        // var keep_ratio = {{DEFOLD_DISPLAY_WIDTH}} / {{DEFOLD_DISPLAY_HEIGHT}};
+        // var keep_ratio = {{display.width}} / {{display.height}};
         // set_width = (height * keep_ratio) | 0;
 
         container.style.marginLeft = Math.max(0, ((width - set_width) / 2) | 0) + "px";
@@ -98,7 +98,7 @@
 
     <script data-src="pako_inflate.min.js" embed></script>
 
-    <script data-src="{{DEFOLD_BINARY_PREFIX}}_archive.js" embed></script>
+    <script data-src="{{exe-name}}_archive.js" embed></script>
     <script>
       var InternalDataHttpRequest = function() {
         this.responseType = "text";
@@ -135,9 +135,7 @@
         archive_location_filter: function(path) {
           return "{{DEFOLD_ARCHIVE_LOCATION_PREFIX}}" + path + "{{DEFOLD_ARCHIVE_LOCATION_SUFFIX}}";
         },
-        {{#HAS_DEFOLD_ENGINE_ARGUMENTS}}
-        engine_arguments: ["{{DEFOLD_ENGINE_ARGUMENTS}}"],
-        {{/HAS_DEFOLD_ENGINE_ARGUMENTS}}
+        engine_arguments: [{{#DEFOLD_ENGINE_ARGUMENTS}}"{{.}}",{{/DEFOLD_ENGINE_ARGUMENTS}}],
         custom_heap_size: {{DEFOLD_HEAP_SIZE}},
         disable_context_menu: true
       };
@@ -162,6 +160,6 @@
       }
     </script>
 
-    <script src="{{DEFOLD_BINARY_PREFIX}}_asmjs.js" embed="compress"></script>
+    <script src="{{exe-name}}_asmjs.js" embed="compress"></script>
   </body>
 </html>

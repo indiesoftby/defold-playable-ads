@@ -60,6 +60,7 @@ shared_state = 1
 
 [html5]
 htmlfile = /html5/engine_template.html
+engine_arguments = --verify-graphics-calls=false
 
 [native_extension]
 app_manifest = /game.appmanifest

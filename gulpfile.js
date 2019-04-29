@@ -1,5 +1,6 @@
 const { series, src, dest } = require("gulp");
 const chalk = require("chalk");
+const crypto = require("crypto");
 const download = require("gulp-download-stream");
 const fancyLog = require("fancy-log");
 const fs = require("fs");
@@ -15,13 +16,22 @@ const { spawn } = require("child_process");
 const Vinyl = require("vinyl");
 
 let projectTitle = "playable_ads";
-const bobJarDownloadUrl =
-  "https://d.defold.com/archive/11b1e7662dd68172fca551c52cba248eea16a364/bob/bob.jar";
 
 const buildDir = "build";
 const archiveDir = "archive";
 const bundleJsWebPath = buildDir + "/bundle/js-web";
-const bobJarPath = buildDir + "/bob.jar";
+
+const bobJarDownloadUrl =
+  "https://d.defold.com/archive/11b1e7662dd68172fca551c52cba248eea16a364/bob/bob.jar";
+const bobJarVersionHash = crypto
+  .createHash("sha256")
+  .update(bobJarDownloadUrl)
+  .digest("hex")
+  .substr(0, 7);
+
+const bobJarDir = buildDir;
+const bobJarFilename = "bob_" + bobJarVersionHash + ".jar";
+const bobJarPath = bobJarDir + "/" + bobJarFilename;
 
 //
 // Helper functions
@@ -90,10 +100,10 @@ function downloadBobJar(cb) {
   } else {
     return download([
       {
-        file: "bob.jar",
+        file: bobJarFilename,
         url: bobJarDownloadUrl
       }
-    ]).pipe(dest(buildDir));
+    ]).pipe(dest(bobJarDir));
   }
 }
 

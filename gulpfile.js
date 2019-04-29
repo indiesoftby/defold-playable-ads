@@ -16,7 +16,7 @@ const Vinyl = require("vinyl");
 
 let projectTitle = "playable_ads";
 const bobJarDownloadUrl =
-  "https://d.defold.com/archive/e05232d70b8a6d8c69fcfe968f01b876090ffa06/bob/bob.jar";
+  "https://d.defold.com/archive/11b1e7662dd68172fca551c52cba248eea16a364/bob/bob.jar";
 
 const buildDir = "build";
 const archiveDir = "archive";

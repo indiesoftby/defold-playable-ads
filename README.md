@@ -54,7 +54,7 @@ Run the `gulp` command to start the build process:
 
 The resulting HTML file is located at `/build/bundle/js-web/playable_ads/playable_ads.html`.
 
-This project uses `bob.jar` version `1.2.151`. Change the download link `bobJarDownloadUrl` in `gulpfile.js` to use other version.
+This project uses `bob.jar` version `1.2.152`. Change the download link `bobJarDownloadUrl` in `gulpfile.js` to use other version.
 
 ### In Your Project
 

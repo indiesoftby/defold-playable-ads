@@ -1,0 +1,27 @@
+function init(self)
+	msg.post(".", "acquire_input_focus")
+
+	msg.post("@render:", "use_fixed_fit_projection", { near = -1, far = 1 })
+end
+
+function final(self)
+end
+
+function update(self, dt)
+end
+
+function on_message(self, message_id, message, sender)
+	if message_id == hash("shovel_start") then
+		print("SHOVEL START")
+	elseif message_id == hash("shovel_finish") then
+		print("SHOVEL FINISH")
+	elseif message_id == hash("shovel_spawn") then
+		print("SHOVEL SPAWN")
+	end
+end
+
+function on_input(self, action_id, action)
+	if action_id == hash("click") and action.pressed then
+		msg.post("/shovel_spawn", "spawn")
+	end
+end

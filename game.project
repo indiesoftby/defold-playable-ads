@@ -3,7 +3,7 @@ title = playable_ads
 version = 1.0.0
 
 [bootstrap]
-main_collection = /main/main.collectionc
+main_collection = /main/game/game_screen.collectionc
 
 [input]
 game_binding = /input/game.input_bindingc
@@ -65,3 +65,10 @@ engine_arguments = --verify-graphics-calls=false
 [native_extension]
 app_manifest = /game.appmanifest
 
+[render]
+clear_color_red = 0.921
+clear_color_green = 0.921
+clear_color_blue = 0.921
+
+[playable_ad]
+bob_jar_download_url = https://d.defold.com/archive/11b1e7662dd68172fca551c52cba248eea16a364/bob/bob.jar

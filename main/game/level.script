@@ -1,0 +1,36 @@
+function init(self)
+	self.targets = {}
+
+	local diameter = 350
+	local count = 14
+	for i = 1, count do
+		local angle = 360 / count * i / 180 * math.pi
+		local radius = diameter / 2
+		local target = nil
+		if i % 4 == 0 then
+			target = factory.create("#target_factory", vmath.vector3())
+		else
+			target = factory.create("#duck_factory", vmath.vector3())
+		end
+		go.set_parent(target, go.get_id())
+
+		msg.post(target, "rotate", {
+			angle = angle,
+			radius = radius
+		})
+
+		self.targets[#self.targets + 1] = target
+	end
+end
+
+function final(self)
+end
+
+function update(self, dt)
+end
+
+function on_message(self, message_id, message, sender)
+end
+
+function on_input(self, action_id, action)
+end

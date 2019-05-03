@@ -7,6 +7,34 @@ images {
 images {
   image: "/assets/images/button_over.png"
 }
+images {
+  image: "/assets/images/duck_off.png"
+}
+images {
+  image: "/assets/images/duck_on.png"
+}
+images {
+  image: "/assets/images/target_off.png"
+}
+images {
+  image: "/assets/images/target_on.png"
+}
+images {
+  image: "/assets/images/shovel.png"
+}
+animations {
+  id: "ui_hand"
+  images {
+    image: "/assets/images/ui_hand_1.png"
+  }
+  images {
+    image: "/assets/images/ui_hand_2.png"
+  }
+  playback: PLAYBACK_LOOP_FORWARD
+  fps: 4
+  flip_horizontal: 0
+  flip_vertical: 0
+}
 margin: 0
-extrude_borders: 2
-inner_padding: 0
+extrude_borders: 1
+inner_padding: 1

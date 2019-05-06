@@ -59,7 +59,7 @@ input_method = HiddenInputField
 shared_state = 1
 
 [html5]
-htmlfile = /html5/engine_template.html
+htmlfile = /playable_ad/engine_template_facebook.html
 engine_arguments = --verify-graphics-calls=false
 
 [native_extension]
@@ -72,3 +72,4 @@ clear_color_blue = 0.921
 
 [playable_ad]
 bob_jar_download_url = https://d.defold.com/archive/11b1e7662dd68172fca551c52cba248eea16a364/bob/bob.jar
+

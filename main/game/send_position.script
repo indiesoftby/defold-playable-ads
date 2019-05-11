@@ -1,4 +1,4 @@
-go.property("receiver", msg.url("/main"))
+go.property("receiver", msg.url("FILL_IT"))
 go.property("message_id", hash("FILL_IT"))
 
 function init(self)

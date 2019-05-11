@@ -12,16 +12,28 @@ end
 
 function on_message(self, message_id, message, sender)
 	if message_id == hash("shovel_start") then
-		print("SHOVEL START")
+		self.start_pos = message.pos
+
 	elseif message_id == hash("shovel_finish") then
-		print("SHOVEL FINISH")
-	elseif message_id == hash("shovel_spawn") then
-		print("SHOVEL SPAWN")
+		self.finish_pos = message.pos
+
+	elseif message_id == hash("new_shovel") then
+		-- print("NEW SHOVEL " .. message.shovel_id)
+		self.shovel = message.shovel_id
 	end
 end
 
 function on_input(self, action_id, action)
 	if action_id == hash("click") and action.pressed then
-		msg.post("/shovel_spawn", "spawn")
+		if self.shovel then
+			msg.post("/interface#tutorial", "disable")
+			
+			msg.post(self.shovel, "throw", {
+				from = self.start_pos,
+				to = self.finish_pos
+			})
+			self.shovel = nil
+			msg.post("/shovel_spawn", "spawn")
+		end
 	end
 end

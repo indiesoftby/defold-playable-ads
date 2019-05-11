@@ -1,10 +1,17 @@
 go.property("anim_value", 0)
+go.property("texture_name_on", hash("target_on"))
+go.property("texture_name_off", hash("target_off"))
 
 function init(self)
 	self.default_pos = go.get_position()
 
+	go.set_scale(vmath.vector3(0.000001))
+	go.animate(".", "scale", go.PLAYBACK_ONCE_FORWARD, vmath.vector3(1), go.EASING_OUTCUBIC, 0.35, 0.1)
+
 	self.radius = 0
 	self.angle = 0
+
+	self.hit = false
 end
 
 function final(self)
@@ -16,11 +23,27 @@ function update(self, dt)
 	go.set_position(vmath.vector3(math.cos(angle) * self.radius, math.sin(angle) * self.radius, 0), go.get_id())
 end
 
+local function toggle_texture(self)
+	if self.hit then
+		msg.post("#sprite", "play_animation", { id = self.texture_name_off })
+		go.animate(".", "scale.x", go.PLAYBACK_ONCE_FORWARD, -1, go.EASING_LINEAR, 0.07)
+	else
+		msg.post("#sprite", "play_animation", { id = self.texture_name_on })
+		go.animate(".", "scale.x", go.PLAYBACK_ONCE_FORWARD, 1, go.EASING_LINEAR, 0.07)
+	end
+end
+
 function on_message(self, message_id, message, sender)
 	if message_id == hash("rotate") then
 		self.angle = message.angle
 		self.radius = message.radius
 
 		go.animate("#target", "anim_value", go.PLAYBACK_LOOP_FORWARD, -3, go.EASING_INOUTQUAD, 3 * 3)
+
+	elseif message_id == hash("hit") then
+		self.hit = not self.hit
+
+		go.cancel_animations(".", "scale.x")
+		go.animate(".", "scale.x", go.PLAYBACK_ONCE_FORWARD, 0, go.EASING_LINEAR, 0.07, 0, toggle_texture)
 	end
 end

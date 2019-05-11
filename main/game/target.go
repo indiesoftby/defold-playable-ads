@@ -42,7 +42,7 @@ embedded_components {
   "friction: 0.1\n"
   "restitution: 0.5\n"
   "group: \"target\"\n"
-  "mask: \"target\"\n"
+  "mask: \"shovel\"\n"
   "embedded_collision_shape {\n"
   "  shapes {\n"
   "    shape_type: TYPE_SPHERE\n"

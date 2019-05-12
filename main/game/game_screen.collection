@@ -17,6 +17,21 @@ embedded_instances {
   "    w: 1.0\n"
   "  }\n"
   "}\n"
+  "components {\n"
+  "  id: \"game\"\n"
+  "  component: \"/main/game/game.gui\"\n"
+  "  position {\n"
+  "    x: 0.0\n"
+  "    y: 0.0\n"
+  "    z: 0.0\n"
+  "  }\n"
+  "  rotation {\n"
+  "    x: 0.0\n"
+  "    y: 0.0\n"
+  "    z: 0.0\n"
+  "    w: 1.0\n"
+  "  }\n"
+  "}\n"
   ""
   position {
     x: 0.0
@@ -127,7 +142,7 @@ embedded_instances {
   ""
   position {
     x: 320.0
-    y: 804.0
+    y: 707.0
     z: 0.0
   }
   rotation {
@@ -217,7 +232,7 @@ embedded_instances {
   ""
   position {
     x: 320.0
-    y: 136.0
+    y: 171.0
     z: 0.0
   }
   rotation {
@@ -355,7 +370,7 @@ embedded_instances {
   ""
   position {
     x: 320.0
-    y: -99.0
+    y: -72.0
     z: 0.0
   }
   rotation {
@@ -367,6 +382,26 @@ embedded_instances {
   scale3 {
     x: 1.0
     y: 1.0
+    z: 1.0
+  }
+}
+embedded_instances {
+  id: "go"
+  data: ""
+  position {
+    x: 320.0
+    y: 570.0
+    z: -1.0
+  }
+  rotation {
+    x: 0.0
+    y: 0.0
+    z: 0.0
+    w: 1.0
+  }
+  scale3 {
+    x: 0.589
+    y: 0.589
     z: 1.0
   }
 }

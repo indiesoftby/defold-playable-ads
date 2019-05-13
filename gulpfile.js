@@ -128,6 +128,10 @@ function buildGame(cb) {
     [
       "-jar",
       bobJarPath,
+      "--email",
+      "foo@bar.com",
+      "--auth",
+      "12345",
       "--bundle-output",
       bundleJsWebPath,
       "--platform",

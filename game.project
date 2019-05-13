@@ -1,6 +1,7 @@
 [project]
 title = playable_ad
 version = 1.0.0
+dependencies = https://github.com/indiesoftby/defold-hyper-trails/archive/1.0.0.zip
 
 [bootstrap]
 main_collection = /main/game/game_screen.collectionc

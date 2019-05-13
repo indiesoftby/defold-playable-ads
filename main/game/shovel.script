@@ -9,7 +9,9 @@ function final(self)
 end
 
 function update(self, dt)
-
+	if self.show_trail then
+		go.set_position(go.get_position() + vmath.vector3(0, 50, 0), go.get_id("/trail"))
+	end
 end
 
 local function throw_complete(self, url, property)
@@ -18,6 +20,8 @@ end
 
 function on_message(self, message_id, message, sender)
 	if message_id == hash("throw") then
+		self.show_trail = true
+
 		go.set(".", "position", message.from)
 		go.animate(".", "position", go.PLAYBACK_ONCE_FORWARD, message.to, go.EASING_LINEAR, 0.300, 0, throw_complete)
 

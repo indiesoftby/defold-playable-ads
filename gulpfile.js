@@ -132,6 +132,8 @@ function buildGame(cb) {
       "foo@bar.com",
       "--auth",
       "12345",
+      "--texture-compression",
+      "true",
       "--bundle-output",
       bundleJsWebPath,
       "--platform",

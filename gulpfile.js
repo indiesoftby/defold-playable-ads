@@ -5,6 +5,7 @@ const download = require("gulp-download-stream");
 const fancyLog = require("fancy-log");
 const fs = require("fs");
 const htmlmin = require("gulp-htmlmin");
+const https = require("https");
 const ini = require("ini");
 const matchAll = require("string.prototype.matchall");
 const prettyBytes = require("pretty-bytes");
@@ -15,23 +16,18 @@ const through2 = require("through2");
 const { spawn } = require("child_process");
 const Vinyl = require("vinyl");
 
-let projectTitle = "playable_ads";
+let projectTitle = "playable_ads"; // updated by parseProjectConfig()
 
 const buildDir = "build";
 const archiveDir = "archive";
 const bundleJsWebPath = buildDir + "/bundle/js-web";
 
-const bobJarDownloadUrl =
-  "https://d.defold.com/archive/11b1e7662dd68172fca551c52cba248eea16a364/bob/bob.jar";
-const bobJarVersionHash = crypto
-  .createHash("sha256")
-  .update(bobJarDownloadUrl)
-  .digest("hex")
-  .substr(0, 7);
+const bobJarVersionInfoUrl = "https://d.defold.com/stable/info.json";
+let bobJarVersionInfo = null; // filled by fetchBobVersionInfo()
 
 const bobJarDir = buildDir;
-const bobJarFilename = "bob_" + bobJarVersionHash + ".jar";
-const bobJarPath = bobJarDir + "/" + bobJarFilename;
+let bobJarFilename = "bob.jar"; // updated by downloadBobJar()
+let bobJarPath = bobJarDir + "/" + bobJarFilename; // updated by downloadBobJar()
 
 //
 // Helper functions
@@ -94,7 +90,36 @@ function javaIsInstalled(cb) {
   });
 }
 
+function fetchBobVersionInfo(cb) {
+  https
+    .get(bobJarVersionInfoUrl, function(res) {
+      res.setEncoding("utf8");
+
+      let body = "";
+      res.on("data", function(data) {
+        body += data;
+      });
+      res.on("end", function() {
+        bobJarVersionInfo = JSON.parse(body);
+
+        if (!/^[a-f0-9]{40}$/i.test(bobJarVersionInfo.sha1)) {
+          throw "Invalid bob.jar SHA-1.";
+        }
+
+        cb();
+      });
+    })
+    .on("error", function(e) {
+      cb(e);
+    });
+}
+
 function downloadBobJar(cb) {
+  const bobJarDownloadUrl =
+    "https://d.defold.com/archive/" + bobJarVersionInfo.sha1 + "/bob/bob.jar";
+  bobJarFilename = "bob_" + bobJarVersionInfo.sha1.substr(0, 7) + ".jar";
+  bobJarPath = bobJarDir + "/" + bobJarFilename;
+
   if (fs.existsSync(bobJarPath)) {
     cb();
   } else {
@@ -132,6 +157,8 @@ function buildGame(cb) {
       "foo@bar.com",
       "--auth",
       "12345",
+      "--texture-compression",
+      "true",
       "--bundle-output",
       bundleJsWebPath,
       "--platform",
@@ -331,6 +358,7 @@ function bundlePlayableAds() {
 exports.default = series(
   parseProjectConfig,
   javaIsInstalled,
+  fetchBobVersionInfo,
   downloadBobJar,
   checkBobJar,
   buildGame,

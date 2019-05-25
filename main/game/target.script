@@ -1,4 +1,5 @@
-go.property("anim_value", 0)
+
+go.property("_anim_value", 0)
 go.property("texture_name_on", hash("target_on"))
 go.property("texture_name_off", hash("target_off"))
 
@@ -19,7 +20,7 @@ end
 
 function update(self, dt)
 	local angle = self.angle
-	angle = angle + self.anim_value * (math.pi * 2)
+	angle = angle + self._anim_value * (math.pi * 2)
 	go.set_position(vmath.vector3(math.cos(angle) * self.radius, math.sin(angle) * self.radius, 0), go.get_id())
 end
 
@@ -34,11 +35,15 @@ local function toggle_texture(self)
 end
 
 function on_message(self, message_id, message, sender)
-	if message_id == hash("rotate") then
+	if message_id == hash("move") then
 		self.angle = message.angle
 		self.radius = message.radius
 
-		go.animate("#target", "anim_value", go.PLAYBACK_LOOP_FORWARD, -3, go.EASING_INOUTQUAD, 3 * 3)
+		if message.mode == 0 then
+			go.animate("#target", "_anim_value", go.PLAYBACK_LOOP_FORWARD, -3, go.EASING_LINEAR, 15)
+		elseif message.mode == 1 then
+			go.animate("#target", "_anim_value", go.PLAYBACK_LOOP_FORWARD, -3, go.EASING_INOUTQUAD, 9)
+		end
 
 	elseif message_id == hash("hit") then
 		self.hit = not self.hit

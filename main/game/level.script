@@ -1,29 +1,43 @@
-function init(self)
-	self.targets = {}
+go.property("radius", 175)
+go.property("count", 14)
+go.property("movement_mode", 0)
 
-	local diameter = 350
-	local count = 14
-	for i = 1, count do
-		local angle = 360 / count * i / 180 * math.pi
-		local radius = diameter / 2
+go.property("_target_show_anim", 0)
+
+local function level_show_complete(self, url, property)
+	msg.post("/game", "level_ready")
+end
+
+function init(self)
+	-- self.targets = {}
+
+	for i = 1, self.count do
+		local angle = 360 / self.count * i / 180 * math.pi
+		local target_radius = self.radius
 		local target = nil
-		if i % 4 == 0 then
+		if i % 40 == 0 then
 			target = factory.create("#target_factory", vmath.vector3())
 		else
 			target = factory.create("#duck_factory", vmath.vector3())
 		end
 		go.set_parent(target, go.get_id())
 
-		msg.post(target, "rotate", {
+		msg.post(target, "move", {
 			angle = angle,
-			radius = radius
+			radius = target_radius,
+			mode = self.movement_mode
 		})
 
-		self.targets[#self.targets + 1] = target
+		-- self.targets[#self.targets + 1] = target
 	end
+
+	msg.post("/interface", "level_show")
+
+	go.animate("#", "_target_show_anim", go.PLAYBACK_ONCE_FORWARD, 1, go.EASING_OUTCUBIC, 0.35, 0.1, level_show_complete)
 end
 
 function final(self)
+	msg.post("/interface", "level_hide")
 end
 
 function update(self, dt)

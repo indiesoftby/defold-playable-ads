@@ -1,0 +1,14 @@
+function init(self)
+	self.stage_num = gui.get_node("stage_num")
+	self.stage_num_scale = gui.get_scale(self.stage_num)
+
+	gui.set_scale(self.stage_num, vmath.vector3(0.000001))
+end
+
+function on_message(self, message_id, message, sender)
+	if message_id == hash("level_show") then
+		gui.animate(self.stage_num, "scale", self.stage_num_scale, gui.EASING_OUTCUBIC, 0.35, 0.1, nil, gui.PLAYBACK_ONCE_FORWARD)
+	elseif message_id == hash("level_hide") then
+		gui.animate(self.stage_num, "scale", vmath.vector3(0.000001), gui.EASING_OUTCUBIC, 0.35, 0.1, nil, gui.PLAYBACK_ONCE_FORWARD)
+	end
+end

@@ -27,7 +27,7 @@ function on_message(self, message_id, message, sender)
 		go.animate(self.shovel, "position", go.PLAYBACK_ONCE_FORWARD, self.start_pos, go.EASING_OUTCUBIC, 0.35, 0)
 		go.animate(self.shovel, "scale", go.PLAYBACK_ONCE_FORWARD, 1, go.EASING_OUTCUBIC, 0.35, 0, spawn_complete)
 
-		msg.post("/main", "new_shovel", {
+		msg.post("/game", "new_shovel", {
 			shovel_id = self.shovel
 		})
 	end

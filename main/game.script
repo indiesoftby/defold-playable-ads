@@ -1,0 +1,7 @@
+function init(self)
+	msg.post(".", "acquire_input_focus")
+
+	msg.post("#proxy", "load")
+	msg.post("#proxy", "init")
+	msg.post("#proxy", "enable")
+end

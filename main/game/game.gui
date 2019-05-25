@@ -1,4 +1,4 @@
-script: ""
+script: "/main/game/game.gui_script"
 fonts {
   name: "vera_large"
   font: "/main/vera_large.font"
@@ -44,7 +44,7 @@ nodes {
   blend_mode: BLEND_MODE_ALPHA
   text: "STAGE 1"
   font: "vera_large"
-  id: "stage"
+  id: "stage_num"
   xanchor: XANCHOR_NONE
   yanchor: YANCHOR_NONE
   pivot: PIVOT_CENTER

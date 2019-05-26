@@ -27,7 +27,7 @@ function on_message(self, message_id, message, sender)
 
 		go.set(".", "position", message.from)
 		go.animate(".", "position", go.PLAYBACK_ONCE_FORWARD, message.to, go.EASING_LINEAR, 0.300, 0, throw_complete)
-
+		
 	elseif message_id == hash("hide") then
 
 		local p = go.get_position()
@@ -36,6 +36,8 @@ function on_message(self, message_id, message, sender)
 		p.z = -0.1
 		go.animate(".", "position", go.PLAYBACK_ONCE_FORWARD, p, go.EASING_LINEAR, 1, 0, hide_complete)
 		go.animate(".", "euler.z", go.PLAYBACK_LOOP_FORWARD, 360 * 3, go.EASING_LINEAR, 0.2 * 3)
+
+		go.animate("#sprite", "tint", go.PLAYBACK_ONCE_FORWARD, vmath.vector4(1, 1, 1, 0), go.EASING_INCUBIC, 0.4)
 
 	elseif message_id == hash("trigger_response") then
 		if message.other_group == hash("target") and not self.hit_target then

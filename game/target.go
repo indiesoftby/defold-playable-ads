@@ -1,6 +1,6 @@
 components {
   id: "target"
-  component: "/main/game/target.script"
+  component: "/game/target.script"
   position {
     x: 0.0
     y: 0.0
@@ -16,7 +16,7 @@ components {
 embedded_components {
   id: "sprite"
   type: "sprite"
-  data: "tile_set: \"/main/main.atlas\"\n"
+  data: "tile_set: \"/game/atlases/main.atlas\"\n"
   "default_animation: \"target_on\"\n"
   "material: \"/builtins/materials/sprite.material\"\n"
   "blend_mode: BLEND_MODE_ALPHA\n"

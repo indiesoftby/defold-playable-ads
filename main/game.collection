@@ -20,7 +20,7 @@ embedded_instances {
   "embedded_components {\n"
   "  id: \"proxy\"\n"
   "  type: \"collectionproxy\"\n"
-  "  data: \"collection: \\\"/main/game/game_screen.collection\\\"\\n"
+  "  data: \"collection: \\\"/game/game_screen.collection\\\"\\n"
   "exclude: false\\n"
   "\"\n"
   "  position {\n"

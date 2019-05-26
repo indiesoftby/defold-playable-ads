@@ -1,11 +1,11 @@
-script: "/main/game/tutorial.gui_script"
+script: "/game/play_now.gui_script"
 fonts {
   name: "vera_large"
-  font: "/main/vera_large.font"
+  font: "/assets/fonts/vera_large.font"
 }
 textures {
   name: "main"
-  texture: "/main/main.atlas"
+  texture: "/game/atlases/main.atlas"
 }
 background_color {
   x: 0.0
@@ -15,8 +15,8 @@ background_color {
 }
 nodes {
   position {
-    x: 330.0
-    y: 376.0
+    x: 320.0
+    y: 169.0
     z: 0.0
     w: 1.0
   }
@@ -33,8 +33,8 @@ nodes {
     w: 1.0
   }
   size {
-    x: 98.0
-    y: 98.0
+    x: 331.0
+    y: 95.0
     z: 0.0
     w: 1.0
   }
@@ -46,14 +46,14 @@ nodes {
   }
   type: TYPE_BOX
   blend_mode: BLEND_MODE_ALPHA
-  texture: "main/ui_hand"
-  id: "hand"
+  texture: "main/button_out"
+  id: "btn_cta"
   xanchor: XANCHOR_NONE
   yanchor: YANCHOR_NONE
   pivot: PIVOT_CENTER
   adjust_mode: ADJUST_MODE_FIT
   layer: ""
-  inherit_alpha: false
+  inherit_alpha: true
   slice9 {
     x: 0.0
     y: 0.0
@@ -69,8 +69,8 @@ nodes {
 }
 nodes {
   position {
-    x: 320.0
-    y: 455.0
+    x: 0.0
+    y: 0.0
     z: 0.0
     w: 1.0
   }
@@ -100,16 +100,16 @@ nodes {
   }
   type: TYPE_TEXT
   blend_mode: BLEND_MODE_ALPHA
-  text: "Tap to shoot"
+  text: "Play Now"
   font: "vera_large"
-  id: "tap_to_shoot"
+  id: "text"
   xanchor: XANCHOR_NONE
   yanchor: YANCHOR_NONE
   pivot: PIVOT_CENTER
   outline {
-    x: 0.2
-    y: 0.2
-    z: 0.2
+    x: 0.0
+    y: 0.0
+    z: 0.0
     w: 1.0
   }
   shadow {
@@ -120,8 +120,9 @@ nodes {
   }
   adjust_mode: ADJUST_MODE_FIT
   line_break: false
+  parent: "btn_cta"
   layer: ""
-  inherit_alpha: false
+  inherit_alpha: true
   alpha: 1.0
   outline_alpha: 1.0
   shadow_alpha: 1.0

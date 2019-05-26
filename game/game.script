@@ -9,6 +9,7 @@ function init(self)
 	msg.post("@render:", "use_fixed_fit_projection", { near = -1, far = 1 })
 
 	self.level_id = collectionfactory.create("#level_factory")[hash("/level")]
+	msg.post("/interface", "level_show")
 end
 
 function final(self)
@@ -27,6 +28,10 @@ function on_message(self, message_id, message, sender)
 	elseif message_id == hash("new_shovel") then
 		-- print("NEW SHOVEL " .. message.shovel_id)
 		self.shovel = message.shovel_id
+
+	elseif message_id == hash("level_show") then
+		
+
 	elseif message_id == hash("level_ready") then
 		self.level_ready = true
 	end

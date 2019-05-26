@@ -31,13 +31,12 @@ function init(self)
 		-- self.targets[#self.targets + 1] = target
 	end
 
-	msg.post("/interface", "level_show")
+	msg.post("/game", "level_show")
 
 	go.animate("#", "_target_show_anim", go.PLAYBACK_ONCE_FORWARD, 1, go.EASING_OUTCUBIC, 0.35, 0.1, level_show_complete)
 end
 
 function final(self)
-	msg.post("/interface", "level_hide")
 end
 
 function update(self, dt)

@@ -1,7 +1,7 @@
-script: "/main/game/game.gui_script"
+script: "/game/game.gui_script"
 fonts {
   name: "vera_large"
-  font: "/main/vera_large.font"
+  font: "/assets/fonts/vera_large.font"
 }
 background_color {
   x: 0.0

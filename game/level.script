@@ -9,7 +9,8 @@ local function level_show_complete(self, url, property)
 end
 
 function init(self)
-	-- self.targets = {}
+	self.targets = {}
+	self.hit_count = 0
 
 	for i = 1, self.count do
 		local angle = 360 / self.count * i / 180 * math.pi
@@ -28,7 +29,7 @@ function init(self)
 			mode = self.movement_mode
 		})
 
-		-- self.targets[#self.targets + 1] = target
+		self.targets[#self.targets + 1] = target
 	end
 
 	msg.post("/game", "level_show")
@@ -43,7 +44,19 @@ function update(self, dt)
 end
 
 function on_message(self, message_id, message, sender)
-end
+	if message_id == hash("target_hit") then
+		if message.hit then
+			self.hit_count = self.hit_count + 1
+		else
+			self.hit_count = self.hit_count - 1
+		end
 
-function on_input(self, action_id, action)
+		if self.hit_count == self.count then
+			for _, v in pairs(self.targets) do
+				msg.post(v, "stop_and_explode")
+			end
+
+			msg.post("/game", "level_all_hit")
+		end
+	end
 end

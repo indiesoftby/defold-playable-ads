@@ -8,7 +8,8 @@ function init(self)
 	
 	msg.post("@render:", "use_fixed_fit_projection", { near = -1, far = 1 })
 
-	self.level_id = collectionfactory.create("#level_factory")[hash("/level")]
+	self.level_factory_ids = collectionfactory.create("#level_factory")
+	self.level_id = self.level_factory_ids[hash("/level")]
 	msg.post("/interface", "level_show")
 end
 
@@ -29,8 +30,24 @@ function on_message(self, message_id, message, sender)
 		-- print("NEW SHOVEL " .. message.shovel_id)
 		self.shovel = message.shovel_id
 
+	elseif message_id == hash("next_level") then
+		self.level_ready = false
+
+		timer.delay(0.5, false, function()
+			local old_level_ids = self.level_factory_ids
+			msg.post("/interface", "next_level")
+
+			go.delete_all(old_level_ids)
+
+			self.level_factory_ids = collectionfactory.create("#level_factory")
+			self.level_id = self.level_factory_ids[hash("/level")]
+		end)
+
+	elseif message_id == hash("level_all_hit") then
+		msg.post(".", "next_level")
+		msg.post("/interface", "level_hide")
+
 	elseif message_id == hash("level_show") then
-		
 
 	elseif message_id == hash("level_ready") then
 		self.level_ready = true

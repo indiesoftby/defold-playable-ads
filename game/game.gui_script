@@ -18,13 +18,11 @@ function on_message(self, message_id, message, sender)
 	elseif message_id == hash("level_hide") then
 		gui.animate(self.stage_num_node, "scale", vmath.vector3(0.000001), gui.EASING_OUTCUBIC, 0.35, 0.1, nil, gui.PLAYBACK_ONCE_FORWARD)
 	elseif message_id == hash("next_level") then
-		msg.post("#", "level_hide")
-
 		self.stage_num = self.stage_num + 1
 
-		timer.delay(0.35, false, function()
-			update_stage_text(self)
-			msg.post("#", "level_show")
-		end)
+		--timer.delay(0.35, false, function()
+		update_stage_text(self)
+		msg.post("#", "level_show")
+		--end)
 	end
 end

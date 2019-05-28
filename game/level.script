@@ -17,9 +17,9 @@ function init(self)
 		local target_radius = self.radius
 		local target = nil
 		if i % 40 == 0 then
-			target = factory.create("#target_factory", vmath.vector3())
-		else
 			target = factory.create("#duck_factory", vmath.vector3())
+		else
+			target = factory.create("#target_factory", vmath.vector3())
 		end
 		go.set_parent(target, go.get_id())
 

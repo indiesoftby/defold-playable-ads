@@ -28,12 +28,19 @@ function update(self, dt)
 	go.set_position(vmath.vector3(math.cos(angle) * self.radius, math.sin(angle) * self.radius, 0))
 end
 
-local function toggle_texture(self)
+local function update_texture(self)
 	if self.hit then
 		msg.post("#sprite", "play_animation", { id = self.texture_name_off })
-		go.animate(".", "scale.x", go.PLAYBACK_ONCE_FORWARD, -1, go.EASING_LINEAR, 0.07)
 	else
 		msg.post("#sprite", "play_animation", { id = self.texture_name_on })
+	end
+end
+
+local function toggle_texture(self)
+	update_texture(self)
+	if self.hit then
+		go.animate(".", "scale.x", go.PLAYBACK_ONCE_FORWARD, -1, go.EASING_LINEAR, 0.07)
+	else
 		go.animate(".", "scale.x", go.PLAYBACK_ONCE_FORWARD, 1, go.EASING_LINEAR, 0.07)
 	end
 end
@@ -60,6 +67,8 @@ function on_message(self, message_id, message, sender)
 
 	elseif message_id == hash("stop_and_explode") then
 		self.stop = true
+
+		update_texture(self)
 
 		msg.post("#collisionobject", "disable")
 

@@ -71,9 +71,6 @@ clear_color_red = 0.921
 clear_color_green = 0.921
 clear_color_blue = 0.921
 
-[playable_ad]
-bob_jar_download_url = https://d.defold.com/archive/11b1e7662dd68172fca551c52cba248eea16a364/bob/bob.jar
-
 [physics]
 trigger_overlap_capacity = 128
 

@@ -16,11 +16,12 @@ const through2 = require("through2");
 const { spawn } = require("child_process");
 const Vinyl = require("vinyl");
 
-let projectTitle = "playable_ads"; // updated by parseProjectConfig()
+let projectTitle = "PROJECT_TITLE"; // updated by parseProjectConfig()
 
+const playableAdDir = "playable_ad";
 const buildDir = "build";
 const archiveDir = "archive";
-const bundleJsWebPath = buildDir + "/bundle/js-web";
+const bundleJsWebPath = buildDir + "/playable-ad/js-web";
 
 const bobJarVersionInfoUrl = "https://d.defold.com/stable/info.json";
 let bobJarVersionInfo = null; // filled by fetchBobVersionInfo()
@@ -153,6 +154,8 @@ function buildGame(cb) {
     [
       "-jar",
       bobJarPath,
+      "--settings",
+      playableAdDir + "/custom.ini",
       "--email",
       "foo@bar.com",
       "--auth",

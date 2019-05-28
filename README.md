@@ -28,7 +28,7 @@ Note: this project was created from the "mobile" project template. For this reas
 
 You will need Node.js, Java and Gulp CLI installed on your environment.
 
-### Ubuntu/Debian or Windows Subsystem for Linux (WSL)
+### Ubuntu/Debian or [Windows Subsystem for Linux (WSL)](https://docs.microsoft.com/en-us/windows/wsl/about)
 
 ```
 sudo apt install -y --no-install-recommends java nodejs npm
@@ -61,7 +61,7 @@ Run the `gulp` command to start the build process:
 
 ![Command line](docs/gulp.gif)
 
-The resulting HTML file is located at `/build/bundle/js-web/playable_ads/playable_ads.html`.
+The resulting HTML file is located at `/build/playable_ad/js-web/YOUR_PROJECT_TITLE/YOUR_PROJECT_TITLE.html`.
 
 ### In Your Project
 

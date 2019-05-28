@@ -10,7 +10,7 @@ before_script:
 script:
   - gulp
   - mkdir ghpages
-  - cp build/bundle/js-web/playable_ad/playable_ad.html ghpages/index.html
+  - cp build/playable_ad/js-web/playable_ad/playable_ad.html ghpages/index.html
 
 deploy:
   provider: pages

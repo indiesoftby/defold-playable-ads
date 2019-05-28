@@ -21,7 +21,7 @@ let projectTitle = "PROJECT_TITLE"; // updated by parseProjectConfig()
 const playableAdDir = "playable_ad";
 const buildDir = "build";
 const archiveDir = "archive";
-const bundleJsWebPath = buildDir + "/playable-ad/js-web";
+const bundleJsWebPath = buildDir + "/playable_ad/js-web";
 
 const bobJarVersionInfoUrl = "https://d.defold.com/stable/info.json";
 let bobJarVersionInfo = null; // filled by fetchBobVersionInfo()

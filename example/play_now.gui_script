@@ -48,11 +48,11 @@ function handle_btn(self, node_id, img_prefix, tab_index, action_id, action, cb)
 	end
 
 	local node = gui.get_node(node_id)
-	if action_id == hash("click") and action.pressed then
+	if action_id == hash("touch") and action.pressed then
 		if gui.pick_node(node, action.x, action.y) then 
 			gui.play_flipbook(node, btn_out_img)
 		end
-	elseif action_id == hash("click") and action.released then
+	elseif action_id == hash("touch") and action.released then
 		if self.btn_is_over[node_id] then
 			gui.play_flipbook(node, btn_over_img)
 		end

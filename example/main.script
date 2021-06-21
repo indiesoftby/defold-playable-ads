@@ -8,7 +8,7 @@ function init(self)
 end
 
 function on_input(self, action_id, action)
-	if action_id == hash("click") and action.pressed then
+	if action_id == hash("touch") and action.pressed then
 		if not self.install_enabled then
 			self.install_enabled = true
 			msg.post("/interface#play_now", "enable")

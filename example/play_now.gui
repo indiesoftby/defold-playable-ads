@@ -1,11 +1,11 @@
-script: "/main/play_now.gui_script"
+script: "/example/play_now.gui_script"
 fonts {
   name: "vera_large"
-  font: "/main/vera_large.font"
+  font: "/example/vera_large.font"
 }
 textures {
   name: "main"
-  texture: "/main/main.atlas"
+  texture: "/example/main.atlas"
 }
 background_color {
   x: 0.0

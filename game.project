@@ -63,5 +63,5 @@ htmlfile = /html5/engine_template.html
 engine_arguments = --verify-graphics-calls=false
 
 [native_extension]
-app_manifest = /game.appmanifest
+app_manifest = /example/game.appmanifest
 

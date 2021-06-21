@@ -2,6 +2,15 @@
 
 [![Build Status](https://travis-ci.com/aglitchman/defold-playable-ads.svg?branch=master)](https://travis-ci.com/aglitchman/defold-playable-ads)
 
+⚠️⚠️⚠️ 
+# Current Status = Broken.
+
+This project isn't buildable since Defold 1.2.169, plus-minus. It was a proof-of-concept and I didn't upgrade it for the newer versions of Defold. Because, in fact, no one uses it.
+
+If you are **REALLY** going to throw money into the FB Ads campaign and use Defold for playable ads, then make an issue, and I'll upgrade the project.
+
+⚠️⚠️⚠️
+
 A [playable ad](https://learn.g2crowd.com/playable-ads) is an interactive advertisement, mostly used to promote mobile games. A playable ad acts as a demo of the game (or product), allowing users to quickly play the game directly in the ad before downloading it.
 
 [Facebook specifications for Playable Ads](https://www.facebook.com/business/help/412951382532338?helpref=faq_content) require that there be a single file for playable ad that contains all assets as part of that single HTML file and assets should be data uri compressed. Also playable asset size should be less than 2MB.

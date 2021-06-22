@@ -100,7 +100,7 @@ nodes {
   }
   type: TYPE_TEXT
   blend_mode: BLEND_MODE_ALPHA
-  text: "Play Now"
+  text: "Click Me!"
   font: "vera_large"
   id: "text"
   xanchor: XANCHOR_NONE

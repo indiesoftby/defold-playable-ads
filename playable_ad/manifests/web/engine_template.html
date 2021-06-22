@@ -1,0 +1,41 @@
+<html>
+  <head></head>
+  <body>
+    <script id="engine-loader" type="text/javascript" src="dmloader.js" embed></script>
+    <script id="engine-start" type="text/javascript" merge="keep">
+      // Playable Ad builder replace the following lines with the contents of these files:
+      // EMBED: pako_inflate.min.js
+      // EMBED: {{exe-name}}_archive.js
+
+      var EmbeddedHttpRequest = function () {
+        this.responseType = "text";
+      };
+      EmbeddedHttpRequest.prototype.open = function (method, url, pass) {
+        this.url = url;
+      };
+      EmbeddedHttpRequest.prototype.send = function (pass) {
+        if (!EMBED_ARCHIVE_DATA[this.url]) {
+          this.onerror();
+        } else {
+          this.readyState = 4;
+          this.status = 200;
+          if (this.responseType == "text" || this.responseType == "json") {
+            this.response = pako.inflate(atob(EMBED_ARCHIVE_DATA[this.url]), { to: "string" });
+            this.onload();
+          } else {
+            var data = pako.inflate(atob(EMBED_ARCHIVE_DATA[this.url]));
+            this.onprogress({
+              lengthComputable: true,
+              total: data.length,
+              loaded: data.length,
+            });
+            this.response = data;
+            this.onload();
+          }
+        }
+      };
+
+      EngineLoader.load("canvas", "{{exe-name}}");
+    </script>
+  </body>
+</html>

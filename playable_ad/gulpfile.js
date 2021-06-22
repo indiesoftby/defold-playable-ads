@@ -16,14 +16,15 @@ const through2 = require("through2");
 const { spawn } = require("child_process");
 const Vinyl = require("vinyl");
 
-let projectTitle = "PROJECT_TITLE"; // updated by parseProjectConfig()
+let projectTitle = "Unnamed project"; // updated by parseProjectConfig()
 
 const playableAdDir = "playable_ad";
+const projectDir = "..";
 const buildDir = "build";
 const archiveDir = "archive";
 const bundleJsWebPath = buildDir + "/playable_ad/js-web";
 
-const bobJarVersionInfoUrl = "https://d.defold.com/stable/info.json";
+const bobJarVersionInfoUrl = "https://d.defold.com/beta/info.json";
 let bobJarVersionInfo = null; // filled by fetchBobVersionInfo()
 
 const bobJarDir = buildDir;
@@ -35,32 +36,24 @@ let bobJarPath = bobJarDir + "/" + bobJarFilename; // updated by downloadBobJar(
 //
 
 function logFilesize(filename, type, size) {
-  fancyLog(
-    "* " +
-      chalk.cyan(filename) +
-      type +
-      " size " +
-      chalk.magenta(size + " B (" + prettyBytes(size) + ")")
-  );
+  fancyLog("* " + chalk.cyan(filename) + type + " size " + chalk.magenta(size + " B (" + prettyBytes(size) + ")"));
 }
 
 function sevenDeflate(filepath, cb) {
   let deflated = Buffer.alloc(0);
-  const cmd = spawn(
-    sevenBin.path7za,
-    ["a", "dummy.gz", "-tgzip", "-mx=9", "-so", filepath],
-    { stdio: ["inherit", "pipe", "inherit"] }
-  );
-  cmd.stdout.on("data", function(data) {
+  const cmd = spawn(sevenBin.path7za, ["a", "dummy.gz", "-tgzip", "-mx=9", "-so", filepath], {
+    stdio: ["inherit", "pipe", "inherit"],
+  });
+  cmd.stdout.on("data", function (data) {
     deflated = Buffer.concat([deflated, data]);
   });
-  cmd.on("close", function(code) {
+  cmd.on("close", function (code) {
     if (code != 0) {
       throw "Can't deflate the file: " + filepath;
     }
     cb(deflated);
   });
-  cmd.on("error", function(err) {
+  cmd.on("error", function (err) {
     console.error(err);
   });
 }
@@ -70,7 +63,7 @@ function sevenDeflate(filepath, cb) {
 //
 
 function parseProjectConfig(cb) {
-  const config = ini.parse(fs.readFileSync("game.project", "utf-8"));
+  const config = ini.parse(fs.readFileSync(projectDir + "/game.project", "utf-8"));
   if (config.project && config.project.title) {
     projectTitle = config.project.title;
   }
@@ -80,27 +73,27 @@ function parseProjectConfig(cb) {
 
 function javaIsInstalled(cb) {
   var cmd = spawn("java", ["-version"]);
-  cmd.on("close", function(code) {
+  cmd.on("close", function (code) {
     if (code != 0) {
       throw "Java is not installed";
     }
     cb();
   });
-  cmd.on("error", function(err) {
+  cmd.on("error", function (err) {
     // skip
   });
 }
 
 function fetchBobVersionInfo(cb) {
   https
-    .get(bobJarVersionInfoUrl, function(res) {
+    .get(bobJarVersionInfoUrl, function (res) {
       res.setEncoding("utf8");
 
       let body = "";
-      res.on("data", function(data) {
+      res.on("data", function (data) {
         body += data;
       });
-      res.on("end", function() {
+      res.on("end", function () {
         bobJarVersionInfo = JSON.parse(body);
 
         if (!/^[a-f0-9]{40}$/i.test(bobJarVersionInfo.sha1)) {
@@ -110,14 +103,13 @@ function fetchBobVersionInfo(cb) {
         cb();
       });
     })
-    .on("error", function(e) {
+    .on("error", function (e) {
       cb(e);
     });
 }
 
 function downloadBobJar(cb) {
-  const bobJarDownloadUrl =
-    "https://d.defold.com/archive/" + bobJarVersionInfo.sha1 + "/bob/bob.jar";
+  const bobJarDownloadUrl = "https://d.defold.com/archive/" + bobJarVersionInfo.sha1 + "/bob/bob.jar";
   bobJarFilename = "bob_" + bobJarVersionInfo.sha1.substr(0, 7) + ".jar";
   bobJarPath = bobJarDir + "/" + bobJarFilename;
 
@@ -127,23 +119,23 @@ function downloadBobJar(cb) {
     return download([
       {
         file: bobJarFilename,
-        url: bobJarDownloadUrl
-      }
+        url: bobJarDownloadUrl,
+      },
     ]).pipe(dest(bobJarDir));
   }
 }
 
 function checkBobJar(cb) {
   const cmd = spawn("java", ["-jar", bobJarPath, "--version"], {
-    stdio: "inherit"
+    stdio: "inherit",
   });
-  cmd.on("close", function(code) {
+  cmd.on("close", function (code) {
     if (code != 0) {
       throw "bob.jar is invalid.";
     }
     cb();
   });
-  cmd.on("error", function(err) {
+  cmd.on("error", function (err) {
     // skip
   });
 }
@@ -153,9 +145,7 @@ function buildGame(cb) {
     "java",
     [
       "-jar",
-      bobJarPath,
-      "--settings",
-      playableAdDir + "/custom.ini",
+      playableAdDir + "/" + bobJarPath,
       "--email",
       "foo@bar.com",
       "--auth",
@@ -163,33 +153,33 @@ function buildGame(cb) {
       "--texture-compression",
       "true",
       "--bundle-output",
-      bundleJsWebPath,
+      playableAdDir + "/" + bundleJsWebPath,
       "--platform",
       "js-web",
       "--archive",
+      "distclean",
       "resolve",
-      // "distclean",
       "build",
-      "bundle"
+      "bundle",
     ],
-    { stdio: "inherit" }
+    { cwd: projectDir, stdio: "inherit" }
   );
-  cmd.on("close", function(code) {
+  cmd.on("close", function (code) {
     if (code != 0) {
       throw "Can't build the game.";
     }
     cb();
   });
-  cmd.on("error", function(err) {
+  cmd.on("error", function (err) {
     console.err(err);
   });
 }
 
-function combineFilesToBase64(out, pathPrefix) {
+function combineFilesToBase64(out) {
   var combinedFiles = {};
 
   return through2.obj(
-    function(file, _, cb) {
+    function (file, _, cb) {
       if (file.isNull()) {
         cb(null, file);
         return;
@@ -200,21 +190,19 @@ function combineFilesToBase64(out, pathPrefix) {
         return cb();
       }
 
-      var archiveFilename = pathPrefix + file.relative;
-      sevenDeflate(file.path, function(deflated) {
+      var archiveFilename = file.relative;
+      sevenDeflate(file.path, function (deflated) {
         const compressed = Buffer.from(deflated).toString("base64");
         combinedFiles[archiveFilename] = compressed;
         cb();
       });
     },
-    function(cb) {
-      var prefix = "var embed_archive_data = ";
-      var buffer = Buffer.from(
-        prefix + JSON.stringify(combinedFiles, null, "  ")
-      );
+    function (cb) {
+      var prefix = "var EMBED_ARCHIVE_DATA = ";
+      var buffer = Buffer.from(prefix + JSON.stringify(combinedFiles, null, "  "));
       var fileListFile = new Vinyl({
         path: out,
-        contents: buffer
+        contents: buffer,
       });
       this.push(fileListFile);
       cb();
@@ -229,31 +217,24 @@ function copyPakoJs() {
 
 function archiveToBase64() {
   const dir = bundleJsWebPath + "/" + projectTitle;
-  return src(dir + "/" + archiveDir + "/*")
-    .pipe(combineFilesToBase64(projectTitle + "_archive.js", archiveDir + "/"))
+  return src([archiveDir + "/*", projectTitle + "_asmjs.js"], { base: dir + "/", cwd: dir + "/" })
+    .pipe(combineFilesToBase64(projectTitle + "_archive.js"))
     .pipe(dest(dir + "/"));
 }
 
 function embedImages(dir) {
-  return through2.obj(function(file, _, cb) {
+  return through2.obj(function (file, _, cb) {
     if (file.isBuffer()) {
       const input = file.contents.toString();
       let output = input;
-      let matches = matchAll(
-        input,
-        /(var splash_image = ")(.+?\.(png|jpg))(")/g
-      );
+      let matches = matchAll(input, /(var splash_image = ")(.+?\.(png|jpg))(")/g);
       for (const match of matches) {
         const searchMatch = match[0];
         const filename = match[2];
         const fspath = dir + "/" + filename;
 
         const imageData = fs.readFileSync(fspath);
-        const dataUriData =
-          "data:image/" +
-          match[3] +
-          ";base64," +
-          Buffer.from(imageData).toString("base64");
+        const dataUriData = "data:image/" + match[3] + ";base64," + Buffer.from(imageData).toString("base64");
         const replacement = match[1] + dataUriData + match[4];
         output = output.split(searchMatch).join(replacement);
 
@@ -266,47 +247,50 @@ function embedImages(dir) {
 }
 
 function embedJs(dir) {
-  return through2.obj(function(file, _, cb) {
+  return through2.obj(function (file, _, cb) {
     if (file.isBuffer()) {
       const input = file.contents.toString();
       let output = input;
-      const matches = matchAll(
-        input,
-        /<script (data-)?src="(.+?)" embed(="(compress)")?><\/script>/g
-      );
 
-      const promises = Array.from(matches).map(function(match) {
-        return new Promise(function(cb) {
-          const searchMatch = match[0];
-          const filename = match[2];
-          const fspath = dir + "/" + filename;
-          const compress = match[4] == "compress";
+      const matches = Array.from(matchAll(input, /<script [^>]*?(data-)?src="(.+?)" embed(="(compress)")?><\/script>/g)).map(function (match) {
+        return {
+          searchMatch: match[0],
+          filename: match[2],
+          compress: match[4] == "compress",
+          script: true
+        }
+      }).concat(Array.from(matchAll(input, /\/\/ EMBED: (.+)/g)).map(function(match) {
+        return {
+          searchMatch: match[0],
+          filename: match[1],
+        }
+      }));
 
-          if (!compress) {
+      const promises = Array.from(matches).map(function (match) {
+        return new Promise(function (cb) {
+          const fspath = dir + "/" + match.filename;
+          if (!match.compress) {
             const filetext = fs.readFileSync(fspath, "utf-8");
-            const replacement = "<script>" + filetext + "\n</script>";
-            output = output.split(searchMatch).join(replacement);
+            const replacement = match.script ? "<script>" + filetext + "\n</script>" : filetext;
+            output = output.split(match.searchMatch).join(replacement);
 
-            logFilesize(filename, "", replacement.length);
+            logFilesize(match.filename, "", replacement.length);
 
             cb();
           } else {
-            sevenDeflate(fspath, function(deflated) {
+            sevenDeflate(fspath, function (deflated) {
               const compressed = Buffer.from(deflated).toString("base64");
-              const replacement =
-                "<script>eval(pako.inflate(atob('" +
-                compressed +
-                "'), { to: 'string' }));</script>";
+              const replacement = "<script>eval(pako.inflate(atob('" + compressed + "'), { to: 'string' }));</script>";
               output = output.split(searchMatch).join(replacement);
-              logFilesize(filename, " compressed", deflated.length);
-              logFilesize(filename, " encoded", replacement.length);
+              logFilesize(match.filename, " compressed", deflated.length);
+              logFilesize(match.filename, " encoded", replacement.length);
               cb();
             });
           }
         });
       });
 
-      Promise.all(promises).then(function() {
+      Promise.all(promises).then(function () {
         file.contents = Buffer.from(output);
 
         cb(null, file);
@@ -318,7 +302,7 @@ function embedJs(dir) {
 }
 
 function printSize(type) {
-  return through2.obj(function(file, _, cb) {
+  return through2.obj(function (file, _, cb) {
     if (file.isBuffer()) {
       logFilesize(file.relative, type, file.contents.length);
     }
@@ -334,15 +318,15 @@ function bundlePlayableAds() {
     .pipe(
       replace(
         // hack for UglifyJS minifier
-        /(isWASMSupported)(.|[\r\n])+?}\)\(\),/,
-        "$1: false,"
+        /(isWASMSupported:)(.|[\r\n])+?}\)\(\),/,
+        "$1 false,"
       )
     )
     .pipe(
       replace(
         // custom XMLHttpRequest
         /XMLHttpRequest/g,
-        "InternalDataHttpRequest"
+        "EmbeddedHttpRequest"
       )
     )
     .pipe(rename(projectTitle + ".html"))
@@ -351,7 +335,7 @@ function bundlePlayableAds() {
         collapseWhitespace: true,
         preserveLineBreaks: true,
         minifyCSS: true,
-        minifyJS: true
+        // minifyJS: true,
       })
     )
     .pipe(printSize(" resulting"))
@@ -364,7 +348,7 @@ exports.default = series(
   fetchBobVersionInfo,
   downloadBobJar,
   checkBobJar,
-  buildGame,
+  // buildGame,
   copyPakoJs,
   archiveToBase64,
   bundlePlayableAds

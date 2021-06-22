@@ -59,9 +59,10 @@ input_method = HiddenInputField
 shared_state = 1
 
 [html5]
-htmlfile = /html5/engine_template.html
 engine_arguments = --verify-graphics-calls=false
-
-[native_extension]
-app_manifest = /example/game.appmanifest
+show_made_with_defold = 0
+show_fullscreen_button = 0
+scale_mode = stretch
+cssfile = /builtins/manifests/web/dark_theme.css
+heap_size = 64
 

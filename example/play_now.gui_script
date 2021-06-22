@@ -30,7 +30,7 @@ end
 
 function call_to_action(self)
 	if html5 then
-		html5.run("FbPlayableAd_onCTAClick()")
+		html5.run("FbPlayableAd.onCTAClick();")
 	end
 end
 

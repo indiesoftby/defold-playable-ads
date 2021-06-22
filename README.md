@@ -59,8 +59,6 @@ gulp
 
 The resulting HTML file is located at `/playable_ad/build/output_js-web/YOUR_PROJECT_TITLE/YOUR_PROJECT_TITLE.html`.
 
-![Command line](docs/gulp.gif)
-
 ## License
 
 MIT.

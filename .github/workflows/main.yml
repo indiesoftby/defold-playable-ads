@@ -1,11 +1,10 @@
-name: Build demo.zip
+name: Build example
 
 on:
   workflow_dispatch:
   push:
-    tags:
-      - 0.*
-      - 1.*
+    branches:
+      - main
 
 jobs:
   build-and-deploy:

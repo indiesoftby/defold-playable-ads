@@ -193,6 +193,7 @@ function combineFilesToBase64(out) {
       sevenDeflate(file.path, function (deflated) {
         const compressed = Buffer.from(deflated).toString("base64");
         combinedFiles[archiveFilename] = compressed;
+        logFilesize(archiveFilename, " compressed + base64 encoded", compressed.length);
         cb();
       });
     },

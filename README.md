@@ -13,7 +13,10 @@ If you are **REALLY** going to throw money into the FB Ads campaign and use Defo
 
 A [playable ad](https://learn.g2crowd.com/playable-ads) is an interactive advertisement, mostly used to promote mobile games. A playable ad acts as a demo of the game (or product), allowing users to quickly play the game directly in the ad before downloading it.
 
-[Facebook specifications for Playable Ads](https://www.facebook.com/business/help/412951382532338?helpref=faq_content) require that there be a single file for playable ad that contains all assets as part of that single HTML file and assets should be data uri compressed. Also playable asset size should be less than 2MB.
+Accepted sizes for HTML5 playable ad vary between ad networks:
+1. [Facebook specifications for Playable Ads](https://www.facebook.com/business/help/412951382532338?helpref=faq_content) require that there be a single file for playable ad that contains all assets as part of that single HTML file and assets should be data uri compressed. Also playable asset size should be less than 2MB. And Facebook has started accepting .zip archives with up to 5MB since 2020.
+2. [Google](https://support.google.com/google-ads/answer/9981650?hl=en) requires a .ZIP file with a maximum size of 5MB and no more than 512 files within the .ZIP. Plus .ZIP files can contain the following formats: HTML, CSS, JS, GIF, PNG, JPG, JPEG, SVG.
+3. [ironSource](https://demos.ironsrc.com/test-tool/?adUnitLoader=dapi&mode=testing), AppLovin, and Unity Ads require a single HTML file. The maximum ad size is 5MB.
 
 [**Play the demo**](https://aglitchman.github.io/defold-playable-ads/) project online. Please note that it does not use any external resources as required.
 

@@ -35,7 +35,7 @@ jobs:
           gulp
 
           mkdir public
-          mv build/output_js-web/playable_ad_example.html public/index.html
+          mv build/output_js-web/playable_ad_example/playable_ad_example.html public/index.html
 
       - name: Deploy to Pages 🚀
         uses: JamesIves/github-pages-deploy-action@4.1.4

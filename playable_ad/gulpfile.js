@@ -335,7 +335,7 @@ function bundlePlayableAds() {
         collapseWhitespace: true,
         preserveLineBreaks: true,
         minifyCSS: true,
-        // minifyJS: true,
+        minifyJS: true,
       })
     )
     .pipe(printSize(" resulting"))

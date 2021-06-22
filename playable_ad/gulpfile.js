@@ -1,6 +1,5 @@
 const { series, src, dest } = require("gulp");
 const chalk = require("chalk");
-const crypto = require("crypto");
 const download = require("gulp-download-stream");
 const fancyLog = require("fancy-log");
 const fs = require("fs");
@@ -22,7 +21,7 @@ const playableAdDir = "playable_ad";
 const projectDir = "..";
 const buildDir = "build";
 const archiveDir = "archive";
-const bundleJsWebPath = buildDir + "/playable_ad/js-web";
+const bundleJsWebPath = buildDir + "/output_js-web";
 
 const bobJarVersionInfoUrl = "https://d.defold.com/beta/info.json";
 let bobJarVersionInfo = null; // filled by fetchBobVersionInfo()
@@ -198,7 +197,7 @@ function combineFilesToBase64(out) {
       });
     },
     function (cb) {
-      var prefix = "var EMBED_ARCHIVE_DATA = ";
+      var prefix = "var EMBEDDED_DATA = ";
       var buffer = Buffer.from(prefix + JSON.stringify(combinedFiles, null, "  "));
       var fileListFile = new Vinyl({
         path: out,
@@ -348,7 +347,7 @@ exports.default = series(
   fetchBobVersionInfo,
   downloadBobJar,
   checkBobJar,
-  // buildGame,
+  buildGame,
   copyPakoJs,
   archiveToBase64,
   bundlePlayableAds

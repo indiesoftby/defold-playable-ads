@@ -14,16 +14,16 @@
         this.url = url;
       };
       EmbeddedHttpRequest.prototype.send = function (pass) {
-        if (!EMBED_ARCHIVE_DATA[this.url]) {
+        if (!EMBEDDED_DATA[this.url]) {
           this.onerror();
         } else {
           this.readyState = 4;
           this.status = 200;
           if (this.responseType == "text" || this.responseType == "json") {
-            this.response = pako.inflate(atob(EMBED_ARCHIVE_DATA[this.url]), { to: "string" });
+            this.response = pako.inflate(atob(EMBEDDED_DATA[this.url]), { to: "string" });
             this.onload();
           } else {
-            var data = pako.inflate(atob(EMBED_ARCHIVE_DATA[this.url]));
+            var data = pako.inflate(atob(EMBEDDED_DATA[this.url]));
             this.onprogress({
               lengthComputable: true,
               total: data.length,

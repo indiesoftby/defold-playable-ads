@@ -1,6 +1,6 @@
 # Defold for Playable Ads
 
-This project contains the [Gulp](https://gulpjs.com/) tasks, which:
+This repository contains a script for the [Gulp](https://gulpjs.com/) build system, which:
 1. Downloads [bob.jar](https://d.defold.com/stable/).
 2. Builds the project for the HTML5 platform using `bob.jar`.
 3. Combines all resources into **a single HTML file**. The asm.js binary of the Defold engine is compressed using zlib deflate.
@@ -9,9 +9,9 @@ This project contains the [Gulp](https://gulpjs.com/) tasks, which:
 
 ## Current Status
 
-| Defold Version | Status        |
-| -------------- | ------------- |
-| 1.2.184        | Tested ✅     |
+| Tool Version   | Defold Version | Status        |
+| -------------- | -------------- | ------------- |
+| 1.0.0          | 1.2.184        | Tested ✅     |
 
 ## About A Playable Ad
 

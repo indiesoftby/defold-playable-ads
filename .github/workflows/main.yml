@@ -34,8 +34,8 @@ jobs:
           npm install
           gulp
 
-          mkdir -p playable_ad/public
-          mv playable_ad/build/output_js-web/playable_ad_example.html playable_ad/public/index.html
+          mkdir public
+          mv build/output_js-web/playable_ad_example.html public/index.html
 
       - name: Deploy to Pages 🚀
         uses: JamesIves/github-pages-deploy-action@4.1.4

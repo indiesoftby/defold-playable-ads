@@ -1,0 +1,45 @@
+name: Build demo.zip
+
+on:
+  workflow_dispatch:
+  push:
+    tags:
+      - 0.*
+      - 1.*
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout 🛎️
+        uses: actions/checkout@v2
+
+      - name: Install Java ♨️
+        uses: actions/setup-java@v2
+        with:
+          distribution: "adopt"
+          java-version: "11"
+
+      - name: Install Node
+        uses: actions/setup-node@v2
+        with:
+          node-version: '14'
+
+      - name: Build 🔧
+        run: |
+          lsb_release -a
+
+          npm install --global gulp-cli
+
+          cd playable_ad
+          npm install
+          gulp
+
+          mkdir -p playable_ad/public
+          mv playable_ad/build/output_js-web/playable_ad_example.html playable_ad/public/index.html
+
+      - name: Deploy to Pages 🚀
+        uses: JamesIves/github-pages-deploy-action@4.1.4
+        with:
+          branch: gh-pages
+          folder: playable_ad/public

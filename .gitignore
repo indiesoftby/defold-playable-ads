@@ -9,6 +9,3 @@ Thumbs.db
 .cproject
 builtins
 /.vscode
-/playable_ad/build
-/playable_ad/node_modules
-

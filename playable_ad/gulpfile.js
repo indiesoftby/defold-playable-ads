@@ -11,9 +11,9 @@ const matchAll = require("string.prototype.matchall");
 const prettyBytes = require("pretty-bytes");
 const rename = require("gulp-rename");
 const replace = require("gulp-replace");
-const sevenBin = require("7zip-bin");
 const through2 = require("through2");
 const { spawn } = require("child_process");
+const UglifyJS = require('uglify-js');
 const Vinyl = require("vinyl");
 
 let projectTitle = "Unnamed project"; // updated by parseProjectConfig()
@@ -39,23 +39,28 @@ function logFilesize(filename, type, size) {
   fancyLog("* " + chalk.cyan(filename) + type + " size " + chalk.magenta(size + " B (" + prettyBytes(size) + ")"));
 }
 
-function sevenDeflate(filepath, cb) {
-  let deflated = Buffer.alloc(0);
-  const cmd = spawn(sevenBin.path7za, ["a", "dummy.gz", "-tgzip", "-mx=9", "-so", filepath], {
-    stdio: ["inherit", "pipe", "inherit"],
-  });
-  cmd.stdout.on("data", function (data) {
-    deflated = Buffer.concat([deflated, data]);
-  });
-  cmd.on("close", function (code) {
-    if (code != 0) {
-      throw "Can't deflate the file: " + filepath;
-    }
-    cb(deflated);
-  });
-  cmd.on("error", function (err) {
-    console.error(err);
-  });
+function modifyAndMinifyJs(filename, contents) {
+  if (filename == "dmloader.js") {
+    contents = contents.replace(
+      // hack for UglifyJS minifier
+      /(isWASMSupported:)(.|[\r\n])+?}\)\(\),/,
+      "$1 false,"
+    );
+
+    contents = contents.replace(
+      // custom XMLHttpRequest
+      /XMLHttpRequest/g,
+      "EmbeddedHttpRequest"
+    );
+  }
+
+  const result = UglifyJS.minify(contents, { parse: { bare_returns: true } });
+  if (result.error) {
+    console.warn(result.error);
+    return contents;
+  }
+
+  return result.code.replace(/;$/, '');
 }
 
 //
@@ -275,17 +280,16 @@ function embedJs(dir) {
       const promises = Array.from(matches).map(function (match) {
         return new Promise(function (cb) {
           const fspath = dir + "/" + match.filename;
+          const fileContents = fs.readFileSync(fspath, "utf-8");
+          const modified = modifyAndMinifyJs(match.filename, fileContents);
+          // console.log(modified);
           if (!match.compress) {
-            const filetext = fs.readFileSync(fspath, "utf-8");
-            const replacement = match.script ? "<script>" + filetext + "\n</script>" : filetext;
+            const replacement = match.script ? "<script>" + modified + "\n</script>" : modified;
             output = output.split(match.searchMatch).join(replacement);
-
             logFilesize(match.filename, "", replacement.length);
-
             cb();
           } else {
-            const fileContents = fs.readFileSync(fspath);
-            gzip(fileContents, {}, function (err, deflated) {
+            gzip(Buffer.from(modified, "utf-8"), {}, function (err, deflated) {
               if (err) {
                 cb(err);
                 return;
@@ -325,25 +329,12 @@ function bundlePlayableAds() {
   return src(dir + "/index.html")
     .pipe(embedImages(dir))
     .pipe(embedJs(dir))
-    .pipe(
-      replace(
-        // hack for UglifyJS minifier
-        /(isWASMSupported:)(.|[\r\n])+?}\)\(\),/,
-        "$1 false,"
-      )
-    )
-    .pipe(
-      replace(
-        // custom XMLHttpRequest
-        /XMLHttpRequest/g,
-        "EmbeddedHttpRequest"
-      )
-    )
     .pipe(rename(projectTitle + ".html"))
     .pipe(
       htmlmin({
         collapseWhitespace: true,
         preserveLineBreaks: true,
+        removeComments: true,
         minifyCSS: true,
         minifyJS: true,
       })

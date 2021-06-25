@@ -1,10 +1,11 @@
 <html>
-  <head></head>
+  <head>
+    <script data-src="pako_inflate.min.js" embed></script>
+  </head>
   <body>
-    <script id="engine-loader" type="text/javascript" src="dmloader.js" embed></script>
+    <script id="engine-loader" type="text/javascript" src="dmloader.js" embed="compress"></script>
     <script id="engine-start" type="text/javascript" merge="keep">
       // Playable Ad builder replace the following lines with the contents of these files:
-      // EMBED: pako_inflate.min.js
       // EMBED: {{exe-name}}_archive.js
 
       var EmbeddedHttpRequest = function () {

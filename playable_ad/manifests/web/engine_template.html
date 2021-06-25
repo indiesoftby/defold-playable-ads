@@ -14,25 +14,34 @@
         this.url = url;
       };
       EmbeddedHttpRequest.prototype.send = function (pass) {
-        if (!EMBEDDED_DATA[this.url]) {
-          this.onerror();
-        } else {
-          this.readyState = 4;
-          this.status = 200;
-          if (this.responseType == "text" || this.responseType == "json") {
-            this.response = pako.inflate(atob(EMBEDDED_DATA[this.url]), { to: "string" });
-            this.onload();
-          } else {
-            var data = pako.inflate(atob(EMBEDDED_DATA[this.url]));
-            this.onprogress({
-              lengthComputable: true,
-              total: data.length,
-              loaded: data.length,
-            });
-            this.response = data;
-            this.onload();
-          }
-        }
+        setTimeout(
+          function () {
+            var self = this;
+            if (!EMBEDDED_DATA[self.url]) {
+              self.onerror();
+            } else {
+              self.readyState = 4;
+              self.status = 200;
+              var time1 = new Date().getTime();
+              if (self.responseType == "text" || self.responseType == "json") {
+                self.response = pako.inflate(atob(EMBEDDED_DATA[self.url]), { to: "string" });
+              } else {
+                var data = pako.inflate(atob(EMBEDDED_DATA[self.url]));
+                self.onprogress({
+                  lengthComputable: true,
+                  total: data.length,
+                  loaded: data.length,
+                });
+                self.response = data;
+              }
+              var time2 = new Date().getTime();
+              self.onload();
+              var time3 = new Date().getTime();
+              console.log(self.url + ": decode " + (time2 - time1) + " ms, onload() " + (time3 - time2) + " ms");
+            }
+          }.bind(this),
+          0
+        );
       };
 
       EngineLoader.load("canvas", "{{exe-name}}");

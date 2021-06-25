@@ -3,6 +3,7 @@ const chalk = require("chalk");
 const download = require("gulp-download-stream");
 const fancyLog = require("fancy-log");
 const fs = require("fs");
+const { gzip } = require('@gfx/zopfli');
 const htmlmin = require("gulp-htmlmin");
 const https = require("https");
 const ini = require("ini");
@@ -190,7 +191,12 @@ function combineFilesToBase64(out) {
       }
 
       var archiveFilename = file.relative;
-      sevenDeflate(file.path, function (deflated) {
+      var fileContents = fs.readFileSync(file.path);
+      gzip(fileContents, {}, function (err, deflated) {
+        if (err) {
+          cb(err);
+          return;
+        }
         const compressed = Buffer.from(deflated).toString("base64");
         combinedFiles[archiveFilename] = compressed;
         logFilesize(archiveFilename, " compressed + base64 encoded", compressed.length);
@@ -278,12 +284,16 @@ function embedJs(dir) {
 
             cb();
           } else {
-            sevenDeflate(fspath, function (deflated) {
+            const fileContents = fs.readFileSync(fspath);
+            gzip(fileContents, {}, function (err, deflated) {
+              if (err) {
+                cb(err);
+                return;
+              }
               const compressed = Buffer.from(deflated).toString("base64");
               const replacement = "<script>eval(pako.inflate(atob('" + compressed + "'), { to: 'string' }));</script>";
-              output = output.split(searchMatch).join(replacement);
-              logFilesize(match.filename, " compressed", deflated.length);
-              logFilesize(match.filename, " encoded", replacement.length);
+              output = output.split(match.searchMatch).join(replacement);
+              logFilesize(match.filename, " compressed + base64 encoded", replacement.length);
               cb();
             });
           }

@@ -29,7 +29,7 @@ You will need Node.js, Java and Gulp CLI installed on your environment.
 ### Ubuntu/Debian or [Windows Subsystem for Linux (WSL)](https://docs.microsoft.com/en-us/windows/wsl/about)
 
 ```
-sudo apt install -y --no-install-recommends java nodejs npm
+sudo apt install --no-install-recommends openjdk-11-jre-headless nodejs npm
 
 npm install --global gulp-cli
 ```
@@ -39,8 +39,8 @@ npm install --global gulp-cli
 Install [brew](https://brew.sh/) and paste that in a macOS Terminal prompt:
 
 ```
-brew install node
-brew cask install java
+brew install node@14
+brew install openjdk@11
 
 npm install --global gulp-cli
 ```

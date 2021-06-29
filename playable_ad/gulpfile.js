@@ -24,7 +24,7 @@ const buildDir = "build";
 const archiveDir = "archive";
 const bundleJsWebPath = buildDir + "/output_js-web";
 
-const bobJarVersionInfoUrl = "https://d.defold.com/beta/info.json";
+const bobJarVersionInfoUrl = "https://d.defold.com/stable/info.json";
 let bobJarVersionInfo = null; // filled by fetchBobVersionInfo()
 
 const bobJarDir = buildDir;

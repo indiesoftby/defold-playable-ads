@@ -32,7 +32,7 @@ You will need Node.js, Java 11 and Gulp CLI installed on your environment.
 
 1. Download [Node.js Windows Installer (.msi) for 64-bit](https://nodejs.org/en/download/) and install it.
 2. Download and install [Java 11](https://adoptopenjdk.net/).
-3. Open `cmd.exe` and run:
+3. Open `cmd.exe` and run to install Gulp CLI:
 
 ```
 npm install --global gulp-cli

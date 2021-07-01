@@ -77,7 +77,9 @@ function parseProjectConfig(cb) {
 }
 
 function javaIsInstalled(cb) {
-  var cmd = spawn("java", ["-version"]);
+  var cmd = spawn("java", ["-version"], {
+    stdio: "inherit",
+  });
   cmd.on("close", function (code) {
     if (code != 0) {
       throw "Java is not installed";

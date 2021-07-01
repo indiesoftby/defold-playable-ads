@@ -183,7 +183,7 @@ function buildGame(cb) {
 }
 
 function combineFilesToBase64(out) {
-  var combinedFiles = {};
+  let combinedFiles = {};
 
   return through2.obj(
     function (file, _, cb) {
@@ -197,8 +197,8 @@ function combineFilesToBase64(out) {
         return cb();
       }
 
-      var archiveFilename = file.relative;
-      var fileContents = fs.readFileSync(file.path);
+      const archiveFilename = file.relative.replace("\\", "/"); // Windows fix
+      const fileContents = fs.readFileSync(file.path);
       gzip(fileContents, {}, function (err, deflated) {
         if (err) {
           cb(err);
@@ -211,9 +211,9 @@ function combineFilesToBase64(out) {
       });
     },
     function (cb) {
-      var prefix = "var EMBEDDED_DATA = ";
-      var buffer = Buffer.from(prefix + JSON.stringify(combinedFiles, null, "  "));
-      var fileListFile = new Vinyl({
+      const prefix = "var EMBEDDED_DATA = ";
+      const buffer = Buffer.from(prefix + JSON.stringify(combinedFiles, null, "  "));
+      const fileListFile = new Vinyl({
         path: out,
         contents: buffer,
       });

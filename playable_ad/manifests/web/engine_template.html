@@ -47,6 +47,15 @@
       };
 
       EngineLoader.load("canvas", "{{exe-name}}");
+
+      // FB requires to implement the call `FbPlayableAd.onCTAClick` in the JS code. Use it from the Defold like `html5.run("FbPlayableAd_onCTAClick()")`.
+      function FbPlayableAd_onCTAClick() {
+        try {
+          FbPlayableAd.onCTAClick();
+        } catch (e) {
+          console.error(e);
+        }
+      }
     </script>
   </body>
 </html>

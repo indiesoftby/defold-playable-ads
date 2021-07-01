@@ -1,7 +1,7 @@
 
 local function call_to_action(self)
 	if html5 then
-		html5.run("try { FbPlayableAd.onCTAClick(); } catch (e) { console.warn(e); }")
+		html5.run("FbPlayableAd_onCTAClick()")
 	end
 end
 

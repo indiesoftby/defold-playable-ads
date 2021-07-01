@@ -28,6 +28,16 @@ Accepted sizes for HTML5 playable ad vary between ad networks:
 
 You will need Node.js, Java 11 and Gulp CLI installed on your environment.
 
+### Windows
+
+1. Download [Node.js Windows Installer (.msi) for 64-bit](https://nodejs.org/en/download/) and install it.
+2. Download and install [Java 11](https://adoptopenjdk.net/).
+3. Open `cmd.exe` and run:
+
+```
+npm install --global gulp-cli
+```
+
 ### Ubuntu/Debian or [Windows Subsystem for Linux (WSL)](https://docs.microsoft.com/en-us/windows/wsl/about)
 
 ```
@@ -49,15 +59,16 @@ npm install --global gulp-cli
 
 ## Installation & Usage
 
-Copy the `playable_ad` folder into the root of your project + the `.defignore` file. Then:
+Copy the `playable_ad` folder into the root of your project + the `.defignore` file. Then, in the command line:
 
 ```
+cd your_project_folder
 cd playable_ad
 npm install
 gulp
 ```
 
-`npm install` install required NodeJS packages. `gulp` builds the project into a single HTML file.
+`npm install` installs required NodeJS packages. `gulp` builds the project into a single HTML file.
 
 The resulting HTML file is located at `/playable_ad/build/output_js-web/YOUR_PROJECT_TITLE/YOUR_PROJECT_TITLE.html`.
 

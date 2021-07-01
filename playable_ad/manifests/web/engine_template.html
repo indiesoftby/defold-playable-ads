@@ -5,7 +5,7 @@
   <body>
     <script id="engine-loader" type="text/javascript" src="dmloader.js" embed="compress"></script>
     <script id="engine-start" type="text/javascript" merge="keep">
-      // Playable Ad builder replace the following lines with the contents of these files:
+      // The Playable Ad builder (i.e. gulpfile.js) replaces the following lines with the contents of these files:
       // EMBED: {{exe-name}}_archive.js
 
       var EmbeddedHttpRequest = function () {
@@ -19,6 +19,7 @@
           function () {
             var self = this;
             if (!EMBEDDED_DATA[self.url]) {
+              console.warn(self.url + ": not found");
               self.onerror();
             } else {
               self.readyState = 4;

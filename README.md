@@ -9,6 +9,8 @@ This repository contains a script for the [Gulp](https://gulpjs.com/) build syst
 
 ## Current Status
 
+Feel free to ask questions: [the topic about this asset is on the Defold forum](https://forum.defold.com/t/defold-for-playable-ads/68689).
+
 | Tool Version   | Defold Version | Status        |
 | -------------- | -------------- | ------------- |
 | 1.0.0          | 1.2.184        | Tested ✅     |
@@ -24,7 +26,7 @@ Accepted sizes for HTML5 playable ad vary between ad networks:
 
 ## Required Prerequisites
 
-You will need Node.js, Java and Gulp CLI installed on your environment.
+You will need Node.js, Java 11 and Gulp CLI installed on your environment.
 
 ### Ubuntu/Debian or [Windows Subsystem for Linux (WSL)](https://docs.microsoft.com/en-us/windows/wsl/about)
 

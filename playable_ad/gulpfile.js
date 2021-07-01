@@ -1,3 +1,25 @@
+//
+// Variables
+//
+
+let projectTitle = "Unnamed project"; // updated by parseProjectConfig()
+
+const playableAdDir = "playable_ad";
+const projectDir = "..";
+const buildDir = "build";
+const archiveDir = "archive";
+const bundleJsWebPath = buildDir + "/output_js-web";
+
+const bobJarVersionInfoUrl = "https://d.defold.com/stable/info.json";
+let bobJarVersionInfo = null; // filled by fetchBobVersionInfo()
+
+const bobJarDir = buildDir;
+let bobJarFilename = "bob.jar"; // updated by downloadBobJar()
+let bobJarPath = bobJarDir + "/" + bobJarFilename; // updated by downloadBobJar()
+
+//
+// Modules
+//
 const { series, src, dest } = require("gulp");
 const chalk = require("chalk");
 const download = require("gulp-download-stream");
@@ -15,21 +37,6 @@ const through2 = require("through2");
 const { spawn } = require("child_process");
 const UglifyJS = require('uglify-js');
 const Vinyl = require("vinyl");
-
-let projectTitle = "Unnamed project"; // updated by parseProjectConfig()
-
-const playableAdDir = "playable_ad";
-const projectDir = "..";
-const buildDir = "build";
-const archiveDir = "archive";
-const bundleJsWebPath = buildDir + "/output_js-web";
-
-const bobJarVersionInfoUrl = "https://d.defold.com/stable/info.json";
-let bobJarVersionInfo = null; // filled by fetchBobVersionInfo()
-
-const bobJarDir = buildDir;
-let bobJarFilename = "bob.jar"; // updated by downloadBobJar()
-let bobJarPath = bobJarDir + "/" + bobJarFilename; // updated by downloadBobJar()
 
 //
 // Helper functions
@@ -151,18 +158,12 @@ function buildGame(cb) {
   const cmd = spawn(
     "java",
     [
-      "-jar",
-      playableAdDir + "/" + bobJarPath,
-      "--email",
-      "foo@bar.com",
-      "--auth",
-      "12345",
-      "--texture-compression",
-      "true",
-      "--bundle-output",
-      playableAdDir + "/" + bundleJsWebPath,
-      "--platform",
-      "js-web",
+      "-jar", playableAdDir + "/" + bobJarPath,
+      "--email", "foo@bar.com",
+      "--auth", "12345",
+      "--texture-compression", "true",
+      "--bundle-output", playableAdDir + "/" + bundleJsWebPath,
+      "--platform", "js-web",
       "--archive",
       "distclean",
       "resolve",

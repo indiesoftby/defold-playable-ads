@@ -20,6 +20,7 @@ let bobJarPath = bobJarDir + "/" + bobJarFilename; // updated by downloadBobJar(
 //
 // Modules
 //
+
 const { series, src, dest } = require("gulp");
 const chalk = require("chalk");
 const download = require("gulp-download-stream");
@@ -40,7 +41,7 @@ const UglifyJS = require("uglify-js");
 const Vinyl = require("vinyl");
 
 //
-// Processing arguments
+// Command-line arguments
 //
 
 const knownOptions = {

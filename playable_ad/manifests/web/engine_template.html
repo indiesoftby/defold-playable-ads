@@ -1,52 +1,47 @@
 <html>
   <head>
     <script data-src="pako_inflate.min.js" embed></script>
-  </head>
-  <body>
-    <script id="engine-loader" type="text/javascript" src="dmloader.js" embed="compress"></script>
-    <script id="engine-start" type="text/javascript" merge="keep">
-      // The Playable Ad builder (i.e. gulpfile.js) replaces the following lines with the contents of these files:
-      // EMBED: {{exe-name}}_archive.js
-
+    <script>
+      // The Gulp script replaces XMLHttpRequest with EmbeddedHttpRequest to load files from the compressed data file (.._archive.js), see below.
       var EmbeddedHttpRequest = function () {
         this.responseType = "text";
       };
-      EmbeddedHttpRequest.prototype.open = function (method, url, pass) {
+      EmbeddedHttpRequest.prototype.open = function (method, url) {
         this.url = url;
       };
-      EmbeddedHttpRequest.prototype.send = function (pass) {
-        setTimeout(
-          function () {
-            var self = this;
-            if (!EMBEDDED_DATA[self.url]) {
-              console.warn(self.url + ": not found");
-              self.onerror();
+      EmbeddedHttpRequest.prototype.send = function () {
+        var next = function () {
+          var self = this;
+          if (!EMBEDDED_DATA[self.url]) {
+            console.warn(self.url + ": not found");
+            self.onerror();
+          } else {
+            self.readyState = 4;
+            self.status = 200;
+            var time1 = new Date().getTime();
+            if (self.responseType == "text" || self.responseType == "json") {
+              self.response = pako.inflate(atob(EMBEDDED_DATA[self.url]), { to: "string" });
             } else {
-              self.readyState = 4;
-              self.status = 200;
-              var time1 = new Date().getTime();
-              if (self.responseType == "text" || self.responseType == "json") {
-                self.response = pako.inflate(atob(EMBEDDED_DATA[self.url]), { to: "string" });
-              } else {
-                var data = pako.inflate(atob(EMBEDDED_DATA[self.url]));
-                self.onprogress({
-                  lengthComputable: true,
-                  total: data.length,
-                  loaded: data.length,
-                });
-                self.response = data;
-              }
-              var time2 = new Date().getTime();
-              self.onload();
-              var time3 = new Date().getTime();
-              console.log(self.url + ": decode " + (time2 - time1) + " ms, onload() " + (time3 - time2) + " ms");
+              var data = pako.inflate(atob(EMBEDDED_DATA[self.url]));
+              self.onprogress({
+                lengthComputable: true,
+                total: data.length,
+                loaded: data.length,
+              });
+              self.response = data;
             }
-          }.bind(this),
-          0
-        );
+            var time2 = new Date().getTime();
+            self.onload();
+            var time3 = new Date().getTime();
+            console.log(self.url + ": decode " + (time2 - time1) + " ms, onload() " + (time3 - time2) + " ms");
+          }
+        }.bind(this);
+        if (typeof EMBEDDED_DATA !== "undefined") {
+          setTimeout(next, 0);
+        } else {
+          window.addEventListener("load", next);
+        }
       };
-
-      EngineLoader.load("canvas", "{{exe-name}}");
 
       // FB requires to implement the call `FbPlayableAd.onCTAClick` in the JS code. Use it from the Defold like `html5.run("FbPlayableAd_onCTAClick()")`.
       function FbPlayableAd_onCTAClick() {
@@ -57,5 +52,9 @@
         }
       }
     </script>
+  </head>
+  <body>
+    <script id="engine-loader" src="dmloader.js" embed="compress"></script>
+    <script data-src="{{exe-name}}_archive.js" embed></script>
   </body>
 </html>

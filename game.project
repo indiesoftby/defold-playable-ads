@@ -34,3 +34,6 @@ scale_mode = stretch
 cssfile = /builtins/manifests/web/dark_theme.css
 heap_size = 64
 
+[graphics]
+texture_profiles = /example/profiles/no_mipmaps.texture_profiles
+

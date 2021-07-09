@@ -25,17 +25,18 @@ const chalk = require("chalk");
 const download = require("gulp-download-stream");
 const fancyLog = require("fancy-log");
 const fs = require("fs");
-const { gzip } = require('@gfx/zopfli');
+const { gzip } = require("@gfx/zopfli");
 const htmlmin = require("gulp-htmlmin");
 const https = require("https");
 const ini = require("ini");
 const matchAll = require("string.prototype.matchall");
+const minimist = require("minimist");
 const prettyBytes = require("pretty-bytes");
 const rename = require("gulp-rename");
 const replace = require("gulp-replace");
 const through2 = require("through2");
 const { spawn } = require("child_process");
-const UglifyJS = require('uglify-js');
+const UglifyJS = require("uglify-js");
 const Vinyl = require("vinyl");
 
 //
@@ -67,7 +68,7 @@ function modifyAndMinifyJs(filename, contents) {
     return contents;
   }
 
-  return result.code.replace(/;$/, '');
+  return result.code.replace(/;$/, "");
 }
 
 //

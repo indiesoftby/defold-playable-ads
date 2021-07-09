@@ -45,8 +45,10 @@ const Vinyl = require("vinyl");
 //
 
 const knownOptions = {
+  boolean: ["embed-archive-js"],
   string: ["build-server", "settings", "variant", "texture-compression"],
   default: {
+    "embed-archive-js": true,
     "build-server": "https://build.defold.com",
     "texture-compression": "true",
     variant: "release",
@@ -74,7 +76,7 @@ function modifyAndMinifyJs(filename, contents) {
     contents = contents.replace(
       // custom XMLHttpRequest
       /XMLHttpRequest/g,
-      "EmbeddedHttpRequest"
+      "ArchiveJsRequest"
     );
   }
 
@@ -236,7 +238,7 @@ function combineFilesToBase64(out) {
       });
     },
     function (cb) {
-      const prefix = "var EMBEDDED_DATA = ";
+      const prefix = "var ARCHIVEJS_DATA = ";
       const buffer = Buffer.from(prefix + JSON.stringify(combinedFiles, null, "  "));
       const fileListFile = new Vinyl({
         path: out,
@@ -253,7 +255,7 @@ function copyPakoJs() {
   return src("node_modules/pako/dist/pako_inflate.min.js").pipe(dest(dir));
 }
 
-function archiveToBase64() {
+function bundleArchiveJs() {
   const dir = bundleJsWebPath + "/" + projectTitle;
   return src([archiveDir + "/*", projectTitle + "_asmjs.js"], { base: dir + "/", cwd: dir + "/" })
     .pipe(combineFilesToBase64(projectTitle + "_archive.js"))
@@ -306,6 +308,21 @@ function embedJs(dir) {
 
       const promises = Array.from(matches).map(function (match) {
         return new Promise(function (cb) {
+          if (match.filename.endsWith("_archive.js")) {
+            if (options["embed-archive-js"] == false) {
+              // Skip embedding the _archive.js file
+              if (match.script) {
+                fancyLog("* " + chalk.cyan(match.filename) + " skipped, will be loaded as an external file");
+                const replacement = "<script src=\"" + match.filename + "\"></script>";
+                output = output.split(match.searchMatch).join(replacement);
+              } else {
+                fancyLog("* " + chalk.cyan(match.filename) + " skipped");
+              }
+              cb();
+              return;
+            }
+          }
+
           const fspath = dir + "/" + match.filename;
           const fileContents = fs.readFileSync(fspath, "utf-8");
           const modified = modifyAndMinifyJs(match.filename, fileContents);
@@ -378,6 +395,6 @@ exports.default = series(
   checkBobJar,
   buildGame,
   copyPakoJs,
-  archiveToBase64,
+  bundleArchiveJs,
   bundlePlayableAds
 );

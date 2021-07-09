@@ -2,17 +2,20 @@
   <head>
     <script data-src="pako_inflate.min.js" embed></script>
     <script>
-      // The Gulp script replaces XMLHttpRequest with EmbeddedHttpRequest to load files from the compressed data file (.._archive.js), see below.
-      var EmbeddedHttpRequest = function () {
+      // The Gulp script replaces XMLHttpRequest with ArchiveJsRequest to load files from the compressed data file (.._archive.js), see below.
+      var ArchiveJsRequest = function () {
         this.responseType = "text";
       };
-      EmbeddedHttpRequest.prototype.open = function (method, url) {
+      ArchiveJsRequest.prototype.open = function (method, url) {
         this.url = url;
       };
-      EmbeddedHttpRequest.prototype.send = function () {
+      ArchiveJsRequest.prototype.send = function () {
         var next = function () {
           var self = this;
-          if (!EMBEDDED_DATA[self.url]) {
+          if (typeof ARCHIVEJS_DATA === "undefined") {
+            console.error("{{exe-name}}_archive.js is not loaded.");
+            self.onerror();
+          } else if (!ARCHIVEJS_DATA[self.url]) {
             console.warn(self.url + ": not found");
             self.onerror();
           } else {
@@ -20,9 +23,9 @@
             self.status = 200;
             var time1 = new Date().getTime();
             if (self.responseType == "text" || self.responseType == "json") {
-              self.response = pako.inflate(atob(EMBEDDED_DATA[self.url]), { to: "string" });
+              self.response = pako.inflate(atob(ARCHIVEJS_DATA[self.url]), { to: "string" });
             } else {
-              var data = pako.inflate(atob(EMBEDDED_DATA[self.url]));
+              var data = pako.inflate(atob(ARCHIVEJS_DATA[self.url]));
               self.onprogress({
                 lengthComputable: true,
                 total: data.length,
@@ -36,7 +39,7 @@
             console.log(self.url + ": decode " + (time2 - time1) + " ms, onload() " + (time3 - time2) + " ms");
           }
         }.bind(this);
-        if (typeof EMBEDDED_DATA !== "undefined") {
+        if (typeof ARCHIVEJS_DATA !== "undefined") {
           setTimeout(next, 0);
         } else {
           window.addEventListener("load", next);

@@ -76,7 +76,10 @@ The resulting HTML file is located at `/playable_ad/build/output_js-web/YOUR_PRO
 
 You can pass the following arguments from the command line to the script:
 
-```
+```bash
+--embed-archive-js <arg>        Embed `_archive.js` file: true/false (default = true).
+
+# The following arguments passed to Bob.jar as is:
 --build-server <arg>            The build server (default = https://build.defold.com).
 --settings <arg>                Path to a game project settings file. Only one occurrance is allowed.
 --variant <arg>                 Specify debug or release (default = release).

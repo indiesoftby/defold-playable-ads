@@ -13,10 +13,10 @@
         var next = function () {
           var self = this;
           if (typeof ARCHIVEJS_DATA === "undefined") {
-            console.error("{{exe-name}}_archive.js is not loaded.");
+            console.warn("⚠️⚠️⚠️ {{exe-name}}_archive.js is not loaded.");
             self.onerror();
           } else if (!ARCHIVEJS_DATA[self.url]) {
-            console.warn(self.url + ": not found");
+            console.warn("⚠️⚠️⚠️ " + self.url + ": not found");
             self.onerror();
           } else {
             self.readyState = 4;

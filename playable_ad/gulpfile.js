@@ -40,6 +40,21 @@ const UglifyJS = require("uglify-js");
 const Vinyl = require("vinyl");
 
 //
+// Processing arguments
+//
+
+const knownOptions = {
+  string: ["build-server", "settings", "variant", "texture-compression"],
+  default: {
+    "build-server": "https://build.defold.com",
+    "texture-compression": "true",
+    variant: "release",
+  },
+};
+
+const options = minimist(process.argv.slice(2), knownOptions);
+
+//
 // Helper functions
 //
 
@@ -156,13 +171,18 @@ function checkBobJar(cb) {
 }
 
 function buildGame(cb) {
-  const cmd = spawn(
-    "java",
+  const command = "java";
+  const args = [].concat(
     [
       "-jar", playableAdDir + "/" + bobJarPath,
       "--email", "foo@bar.com",
       "--auth", "12345",
-      "--texture-compression", "true",
+      "--build-server", options["build-server"],
+      "--variant", options.variant,
+      "--texture-compression", options["texture-compression"],
+    ],
+    (options.settings ? ["--settings", options.settings] : []),
+    [
       "--bundle-output", playableAdDir + "/" + bundleJsWebPath,
       "--platform", "js-web",
       "--archive",
@@ -170,9 +190,11 @@ function buildGame(cb) {
       "resolve",
       "build",
       "bundle",
-    ],
-    { cwd: projectDir, stdio: "inherit" }
-  );
+    ]);
+
+  console.log(command, args.join(" "));
+
+  const cmd = spawn(command, args, { cwd: projectDir, stdio: "inherit" });
   cmd.on("close", function (code) {
     if (code != 0) {
       throw "Can't build the game.";
@@ -268,16 +290,16 @@ function embedJs(dir) {
       let output = input;
 
       const matches = Array.from(matchAll(input, /<script [^>]*?(data-)?src="(.+?)" embed(="(compress)")?><\/script>/g)).map(function (match) {
-        return {
-          searchMatch: match[0],
-          filename: match[2],
-          compress: match[4] == "compress",
+          return {
+            searchMatch: match[0],
+            filename: match[2],
+            compress: match[4] == "compress",
           script: true
         }
       }).concat(Array.from(matchAll(input, /\/\/ EMBED: (.+)/g)).map(function(match) {
-        return {
-          searchMatch: match[0],
-          filename: match[1],
+            return {
+              searchMatch: match[0],
+              filename: match[1],
         }
       }));
 

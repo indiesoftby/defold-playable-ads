@@ -72,6 +72,17 @@ gulp
 
 The resulting HTML file is located at `/playable_ad/build/output_js-web/YOUR_PROJECT_TITLE/YOUR_PROJECT_TITLE.html`.
 
+### Command Line Arguments
+
+You can pass the following arguments from the command line to the script:
+
+```
+--build-server <arg>            The build server (default = https://build.defold.com).
+--settings <arg>                Path to a game project settings file. Only one occurrance is allowed.
+--variant <arg>                 Specify debug or release (default = release).
+--texture-compression <arg>     Use texture compression as specified in texture profiles (default = true).
+```
+
 ## License
 
 MIT.

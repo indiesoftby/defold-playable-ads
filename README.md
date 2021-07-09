@@ -86,6 +86,11 @@ You can pass the following arguments from the command line to the script:
 --texture-compression <arg>     Use texture compression as specified in texture profiles (default = true).
 ```
 
+i.e. run `gulp --embed-archive-js=false` to build a playable ad with the two files:
+
+* `/playable_ad/build/output_js-web/YOUR_PROJECT_TITLE/YOUR_PROJECT_TITLE.html`
+* `/playable_ad/build/output_js-web/YOUR_PROJECT_TITLE/YOUR_PROJECT_TITLE_archive.js`
+
 ## License
 
 MIT.

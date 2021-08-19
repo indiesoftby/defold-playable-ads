@@ -1,8 +1,16 @@
+local bench = require ("example.spectranorm")
 
 local function call_to_action(self)
-	if html5 then
-		html5.run("FbPlayableAd_onCTAClick()")
-	end
+	local t1 = socket.gettime()
+	bench.bench(1200)
+	local t2 = socket.gettime()
+
+	local str = string.format("%d ms", (t2 - t1) * 1000)
+	gui.set_text(gui.get_node("text"), str)
+
+	-- if html5 then
+	-- 	html5.run("FbPlayableAd_onCTAClick()")
+	-- end
 end
 
 local function handle_btn(self, node_id, img_prefix, tab_index, action_id, action, cb)

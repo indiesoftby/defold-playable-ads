@@ -1,0 +1,101 @@
+# App manifest generated Mon Aug 09 2021 11:48:09 GMT+0300 (Moscow Standard Time)
+# Settings: Profiler,OpenGL
+platforms:
+    x86_64-osx:
+        context:
+            excludeLibs: ["profilerext"]
+            excludeSymbols: ["ProfilerExt"]
+            symbols: []
+            libs: ["profilerext_null"]
+            frameworks: []
+            linkFlags: []
+
+    x86_64-linux:
+        context:
+            excludeLibs: ["profilerext"]
+            excludeSymbols: ["ProfilerExt"]
+            symbols: []
+            libs: ["profilerext_null"]
+            linkFlags: []
+
+    js-web:
+        context:
+            excludeLibs: ["profilerext"]
+            excludeJsLibs: []
+            excludeSymbols: ["ProfilerExt"]
+            symbols: []
+            libs: ["profilerext_null"]
+            linkFlags: []
+
+    wasm-web:
+        context:
+            excludeLibs: ["profilerext"]
+            excludeJsLibs: []
+            excludeSymbols: ["ProfilerExt"]
+            symbols: []
+            libs: ["profilerext_null"]
+            linkFlags: []
+
+    x86-win32:
+        context:
+            excludeLibs: ["libprofilerext"]
+            excludeSymbols: ["ProfilerExt"]
+            symbols: []
+            libs: ["libprofilerext_null.lib"]
+            linkFlags: []
+
+    x86_64-win32:
+        context:
+            excludeLibs: ["libprofilerext"]
+            excludeSymbols: ["ProfilerExt"]
+            symbols: []
+            libs: ["libprofilerext_null.lib"]
+            linkFlags: []
+
+    armv7-android:
+        context:
+            excludeLibs: ["profilerext"]
+            excludeJars: []
+            excludeSymbols: ["ProfilerExt"]
+            symbols: []
+            libs: ["profilerext_null"]
+            linkFlags: []
+            jetifier: false
+
+    arm64-android:
+        context:
+            excludeLibs: ["profilerext"]
+            excludeJars: []
+            excludeSymbols: ["ProfilerExt"]
+            symbols: []
+            libs: ["profilerext_null"]
+            linkFlags: []
+            jetifier: false
+
+    armv7-ios:
+        context:
+            excludeLibs: ["profilerext"]
+            excludeSymbols: ["ProfilerExt"]
+            symbols: []
+            libs: ["profilerext_null"]
+            frameworks: []
+            linkFlags: []
+
+    arm64-ios:
+        context:
+            excludeLibs: ["profilerext"]
+            excludeSymbols: ["ProfilerExt"]
+            symbols: []
+            libs: ["profilerext_null"]
+            frameworks: []
+            linkFlags: []
+
+    x86_64-ios:
+        context:
+            excludeLibs: ["profilerext"]
+            excludeSymbols: ["ProfilerExt"]
+            symbols: []
+            libs: ["profilerext_null"]
+            frameworks: []
+            linkFlags: []
+

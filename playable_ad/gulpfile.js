@@ -26,7 +26,6 @@ const chalk = require("chalk");
 const download = require("gulp-download-stream");
 const fancyLog = require("fancy-log");
 const fs = require("fs");
-const { gzip } = require("@gfx/zopfli");
 const htmlmin = require("gulp-htmlmin");
 const https = require("https");
 const ini = require("ini");
@@ -89,6 +88,31 @@ function modifyAndMinifyJs(filename, contents) {
   return result.code.replace(/;$/, "");
 }
 
+function zstdCompress(data, options, callback) {
+  let compressed = Buffer.alloc(0);
+  const cmd = spawn(
+    "zstd",
+    ["-19", "-"],
+    { stdio: ["pipe", "pipe", "inherit"] },
+  );
+  cmd.stdout.on("data", function(data) {
+    compressed = Buffer.concat([compressed, data]);
+  });
+  cmd.on("close", function(code) {
+    if (code != 0) {
+      callback("Can't compress the data");
+      return;
+    }
+    callback(null, compressed);
+  });
+  cmd.on("error", function(err) {
+    // skip
+    // console.error(err);
+  });
+  cmd.stdin.write(data);
+  cmd.stdin.end();
+}
+
 //
 // Gulp tasks
 //
@@ -102,13 +126,28 @@ function parseProjectConfig(cb) {
   cb();
 }
 
+function zstdIsInstalled(cb) {
+  var cmd = spawn("zstd", ["--version"], {
+    stdio: "inherit",
+  });
+  cmd.on("close", function (code) {
+    if (code != 0) {
+      throw "Can't run the `zstd` executable. More info: https://facebook.github.io/zstd/";
+    }
+    cb();
+  });
+  cmd.on("error", function (err) {
+    // skip
+  });
+}
+
 function javaIsInstalled(cb) {
   var cmd = spawn("java", ["-version"], {
     stdio: "inherit",
   });
   cmd.on("close", function (code) {
     if (code != 0) {
-      throw "Java is not installed";
+      throw "Can't run the `java` executable. Download it from: https://www.java.com/en/download/";
     }
     cb();
   });
@@ -226,14 +265,14 @@ function combineFilesToBase64(out) {
 
       const archiveFilename = file.relative.replace("\\", "/"); // Windows fix
       const fileContents = fs.readFileSync(file.path);
-      gzip(fileContents, {}, function (err, deflated) {
+      zstdCompress(fileContents, {}, function (err, deflated) {
         if (err) {
           cb(err);
           return;
         }
         const compressed = Buffer.from(deflated).toString("base64");
         combinedFiles[archiveFilename] = compressed;
-        logFilesize(archiveFilename, " compressed + base64 encoded", compressed.length);
+        logFilesize(archiveFilename, " zstd + base64 encoded", compressed.length);
         cb();
       });
     },
@@ -253,6 +292,11 @@ function combineFilesToBase64(out) {
 function copyPakoJs() {
   const dir = bundleJsWebPath + "/" + projectTitle;
   return src("node_modules/pako/dist/pako_inflate.min.js").pipe(dest(dir));
+}
+
+function copyFzstd() {
+  const dir = bundleJsWebPath + "/" + projectTitle;
+  return src("node_modules/fzstd/umd/index.js").pipe(rename("fzstd.js")).pipe(dest(dir));
 }
 
 function bundleArchiveJs() {
@@ -333,15 +377,15 @@ function embedJs(dir) {
             logFilesize(match.filename, "", replacement.length);
             cb();
           } else {
-            gzip(Buffer.from(modified, "utf-8"), {}, function (err, deflated) {
+            zstdCompress(Buffer.from(modified, "utf-8"), {}, function (err, zstdOutput) {
               if (err) {
                 cb(err);
                 return;
               }
-              const compressed = Buffer.from(deflated).toString("base64");
-              const replacement = "<script>eval(pako.inflate(atob('" + compressed + "'), { to: 'string' }));</script>";
+              const compressed = Buffer.from(zstdOutput).toString("base64");
+              const replacement = "<script>eval(zstdDecStr('" + compressed + "'));</script>";
               output = output.split(match.searchMatch).join(replacement);
-              logFilesize(match.filename, " compressed + base64 encoded", replacement.length);
+              logFilesize(match.filename, " zstd + base64 encoded", replacement.length);
               cb();
             });
           }
@@ -389,12 +433,14 @@ function bundlePlayableAds() {
 
 exports.default = series(
   parseProjectConfig,
+  zstdIsInstalled,
   javaIsInstalled,
   fetchBobVersionInfo,
   downloadBobJar,
   checkBobJar,
   buildGame,
-  copyPakoJs,
+  // copyPakoJs,
+  copyFzstd,
   bundleArchiveJs,
   bundlePlayableAds
 );

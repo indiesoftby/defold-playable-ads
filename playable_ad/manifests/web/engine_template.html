@@ -1,7 +1,118 @@
 <html>
   <head>
-    <script data-src="pako_inflate.min.js" embed></script>
+    <script data-src="fzstd.js" embed></script>
     <script>
+      var binstring2buf = function (str) {
+        var buf = new Uint8Array(str.length);
+        for (var i = 0, len = buf.length; i < len; i++) {
+          buf[i] = str.charCodeAt(i);
+        }
+        return buf;
+      };
+      // Quick check if we can use fast array to bin string conversion
+      //
+      // - apply(Array) can fail on Android 2.2
+      // - apply(Uint8Array) can fail on iOS 5.1 Safari
+      //
+      var STR_APPLY_OK = true;
+      var STR_APPLY_UIA_OK = true;
+      var shrinkBuf = function (buf, size) {
+        if (buf.length === size) {
+          return buf;
+        }
+        if (buf.subarray) {
+          return buf.subarray(0, size);
+        }
+        buf.length = size;
+        return buf;
+      };
+      try {
+        String.fromCharCode.apply(null, [0]);
+      } catch (__) {
+        STR_APPLY_OK = false;
+      }
+      try {
+        String.fromCharCode.apply(null, new Uint8Array(1));
+      } catch (__) {
+        STR_APPLY_UIA_OK = false;
+      }
+      var buf2binstring = function (buf, len) {
+        // On Chrome, the arguments in a function call that are allowed is `65534`.
+        // If the length of the buffer is smaller than that, we can use this optimization,
+        // otherwise we will take a slower path.
+        if (len < 65534) {
+          if ((buf.subarray && STR_APPLY_UIA_OK) || (!buf.subarray && STR_APPLY_OK)) {
+            return String.fromCharCode.apply(null, shrinkBuf(buf, len));
+          }
+        }
+
+        var result = "";
+        for (var i = 0; i < len; i++) {
+          result += String.fromCharCode(buf[i]);
+        }
+        return result;
+      };
+      var buf2string = function (buf, max) {
+        var i, out, c, c_len;
+        var len = max || buf.length;
+
+        // Reserve max possible length (2 words per char)
+        // NB: by unknown reasons, Array is significantly faster for
+        //     String.fromCharCode.apply than Uint16Array.
+        var utf16buf = new Array(len * 2);
+
+        for (out = 0, i = 0; i < len; ) {
+          c = buf[i++];
+          // quick process ascii
+          if (c < 0x80) {
+            utf16buf[out++] = c;
+            continue;
+          }
+
+          c_len = _utf8len[c];
+          // skip 5 & 6 byte codes
+          if (c_len > 4) {
+            utf16buf[out++] = 0xfffd;
+            i += c_len - 1;
+            continue;
+          }
+
+          // apply mask on first byte
+          c &= c_len === 2 ? 0x1f : c_len === 3 ? 0x0f : 0x07;
+          // join the rest
+          while (c_len > 1 && i < len) {
+            c = (c << 6) | (buf[i++] & 0x3f);
+            c_len--;
+          }
+
+          // terminated by end of string?
+          if (c_len > 1) {
+            utf16buf[out++] = 0xfffd;
+            continue;
+          }
+
+          if (c < 0x10000) {
+            utf16buf[out++] = c;
+          } else {
+            c -= 0x10000;
+            utf16buf[out++] = 0xd800 | ((c >> 10) & 0x3ff);
+            utf16buf[out++] = 0xdc00 | (c & 0x3ff);
+          }
+        }
+
+        return buf2binstring(utf16buf, out);
+      };
+
+      function zstdDecStr(b64) {
+        var b = binstring2buf(atob(b64));
+        return buf2string(fzstd.decompress(b));
+      }
+
+      function zstdDecBin(b64) {
+        var b = binstring2buf(atob(b64));
+        return fzstd.decompress(b);
+      }
+
       // The Gulp script replaces XMLHttpRequest with ArchiveJsRequest to load files from the compressed data file (.._archive.js), see below.
       var ArchiveJsRequest = function () {
         this.responseType = "text";
@@ -23,9 +134,9 @@
             self.status = 200;
             var time1 = new Date().getTime();
             if (self.responseType == "text" || self.responseType == "json") {
-              self.response = pako.inflate(atob(ARCHIVEJS_DATA[self.url]), { to: "string" });
+              self.response = zstdDecStr(ARCHIVEJS_DATA[self.url]);
             } else {
-              var data = pako.inflate(atob(ARCHIVEJS_DATA[self.url]));
+              var data = zstdDecBin(ARCHIVEJS_DATA[self.url]);
               self.onprogress({
                 lengthComputable: true,
                 total: data.length,

@@ -1,6 +1,6 @@
 [project]
 title = playable_ad_example
-version = 1.0.0
+version = 1.2.0
 
 [bootstrap]
 main_collection = /example/main.collectionc

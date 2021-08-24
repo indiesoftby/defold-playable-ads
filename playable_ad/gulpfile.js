@@ -33,7 +33,6 @@ const matchAll = require("string.prototype.matchall");
 const minimist = require("minimist");
 const prettyBytes = require("pretty-bytes");
 const rename = require("gulp-rename");
-const replace = require("gulp-replace");
 const through2 = require("through2");
 const { spawn } = require("child_process");
 const UglifyJS = require("uglify-js");
@@ -64,6 +63,16 @@ function logFilesize(filename, type, size) {
   fancyLog("* " + chalk.cyan(filename) + type + " size " + chalk.magenta(size + " B (" + prettyBytes(size) + ")"));
 }
 
+function stripBase64(b64) {
+  if (b64.endsWith("==")) {
+    return b64.substr(0, b64.length - 2);
+  } else if (b64.endsWith("=")) {
+    return b64.substr(0, b64.length - 1);
+  } else {
+    return b64;
+  }
+}
+
 function modifyAndMinifyJs(filename, contents) {
   if (filename == "dmloader.js") {
     contents = contents.replace(
@@ -92,7 +101,7 @@ function zstdCompress(data, options, callback) {
   let compressed = Buffer.alloc(0);
   const cmd = spawn(
     "zstd",
-    ["-19", "-"],
+    ["-c", "-19", "-"],
     { stdio: ["pipe", "pipe", "inherit"] },
   );
   cmd.stdout.on("data", function(data) {
@@ -270,8 +279,8 @@ function combineFilesToBase64(out) {
           cb(err);
           return;
         }
-        const compressed = Buffer.from(deflated).toString("base64");
-        combinedFiles[archiveFilename] = compressed;
+        const compressed = stripBase64(Buffer.from(deflated).toString("base64"));
+        combinedFiles[archiveFilename] = [fileContents.length, compressed];
         logFilesize(archiveFilename, " zstd + base64 encoded", compressed.length);
         cb();
       });
@@ -287,11 +296,6 @@ function combineFilesToBase64(out) {
       cb();
     }
   );
-}
-
-function copyPakoJs() {
-  const dir = bundleJsWebPath + "/" + projectTitle;
-  return src("node_modules/pako/dist/pako_inflate.min.js").pipe(dest(dir));
 }
 
 function copyFzstd() {
@@ -382,7 +386,7 @@ function embedJs(dir) {
                 cb(err);
                 return;
               }
-              const compressed = Buffer.from(zstdOutput).toString("base64");
+              const compressed = stripBase64(Buffer.from(zstdOutput).toString("base64"));
               const replacement = "<script>eval(zstdDecStr('" + compressed + "'));</script>";
               output = output.split(match.searchMatch).join(replacement);
               logFilesize(match.filename, " zstd + base64 encoded", replacement.length);
@@ -439,7 +443,6 @@ exports.default = series(
   downloadBobJar,
   checkBobJar,
   buildGame,
-  // copyPakoJs,
   copyFzstd,
   bundleArchiveJs,
   bundlePlayableAds

@@ -13,7 +13,7 @@ Feel free to ask questions: [the topic about this asset is on the Defold forum](
 
 | Tool Version   | Defold Version | Status        |
 | -------------- | -------------- | ------------- |
-| 1.0.0          | 1.2.184        | Tested ✅     |
+| 1.2.0          | 1.2.185        | Tested ✅     |
 
 ## About A Playable Ad
 
@@ -26,13 +26,18 @@ Accepted sizes for HTML5 playable ad vary between ad networks:
 
 ## Required Prerequisites
 
-You will need Node.js, Java 11 and Gulp CLI installed on your environment.
+You will need the following apps installed on your environment:
+- Node.js 12 or newer.
+- Java 11.
+- Zstd 1.4 or newer.
+- Gulp CLI.
 
 ### Windows
 
-1. Download [Node.js Windows Installer (.msi) for 64-bit](https://nodejs.org/en/download/) and install it.
-2. Download and install [Java 11](https://adoptopenjdk.net/).
-3. Open `cmd.exe` and run to install Gulp CLI:
+1. Download and install [Java 11](https://adoptopenjdk.net/).
+2. Download and unpack [Zstd for Windows 64-bit](https://github.com/facebook/zstd/releases/download/v1.5.0/zstd-v1.5.0-win64.zip). Put the `zstd.exe` executable to the `playable_ad` directory.
+3. Download [Node.js Windows Installer (.msi) for 64-bit](https://nodejs.org/en/download/) and install it.
+4. Open `cmd.exe` and run to install Gulp CLI:
 
 ```
 npm install --global gulp-cli
@@ -41,7 +46,7 @@ npm install --global gulp-cli
 ### Ubuntu/Debian or [Windows Subsystem for Linux (WSL)](https://docs.microsoft.com/en-us/windows/wsl/about)
 
 ```
-sudo apt install --no-install-recommends openjdk-11-jre-headless nodejs npm
+sudo apt install --no-install-recommends openjdk-11-jre-headless nodejs npm zstd
 
 npm install --global gulp-cli
 ```
@@ -53,6 +58,7 @@ Install [brew](https://brew.sh/) and paste that in a macOS Terminal prompt:
 ```
 brew install node@14
 brew install openjdk@11
+brew install zstd@1.5.0
 
 npm install --global gulp-cli
 ```

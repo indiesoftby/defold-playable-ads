@@ -2,115 +2,175 @@
   <head>
     <script data-src="fzstd.js" embed></script>
     <script>
-      var binstring2buf = function (str) {
-        var buf = new Uint8Array(str.length);
-        for (var i = 0, len = buf.length; i < len; i++) {
-          buf[i] = str.charCodeAt(i);
-        }
-        return buf;
-      };
-      // Quick check if we can use fast array to bin string conversion
-      //
-      // - apply(Array) can fail on Android 2.2
-      // - apply(Uint8Array) can fail on iOS 5.1 Safari
-      //
-      var STR_APPLY_OK = true;
-      var STR_APPLY_UIA_OK = true;
-      var shrinkBuf = function (buf, size) {
-        if (buf.length === size) {
-          return buf;
-        }
-        if (buf.subarray) {
-          return buf.subarray(0, size);
-        }
-        buf.length = size;
-        return buf;
-      };
-      try {
-        String.fromCharCode.apply(null, [0]);
-      } catch (__) {
-        STR_APPLY_OK = false;
+      // Temporary fix to be able to test the game on IE11
+      // IE11: Mbed TLS requires /dev/random to run, but https://github.com/emscripten-core/emscripten/pull/7096
+      if (window.msCrypto) {
+        window.crypto = window.msCrypto;
       }
-      try {
-        String.fromCharCode.apply(null, new Uint8Array(1));
-      } catch (__) {
-        STR_APPLY_UIA_OK = false;
+      // IE11: String.endsWith
+      if (!String.prototype.endsWith) {
+        String.prototype.endsWith = function (search, this_len) {
+          if (this_len === undefined || this_len > this.length) {
+            this_len = this.length;
+          }
+          return this.substring(this_len - search.length, this_len) === search;
+        };
       }
-      var buf2binstring = function (buf, len) {
-        // On Chrome, the arguments in a function call that are allowed is `65534`.
-        // If the length of the buffer is smaller than that, we can use this optimization,
-        // otherwise we will take a slower path.
-        if (len < 65534) {
-          if ((buf.subarray && STR_APPLY_UIA_OK) || (!buf.subarray && STR_APPLY_OK)) {
-            return String.fromCharCode.apply(null, shrinkBuf(buf, len));
+      // IE11, Chrome ≤45, Edge ≤14, Firefox ≤37: https://github.com/emscripten-core/emscripten/pull/11011/files
+      [Int8Array, Uint8Array, Int16Array, Uint16Array, Int32Array, Uint32Array, Float32Array, Float64Array].forEach(
+        function (typedArray) {
+          if (!typedArray.prototype.slice) {
+            Object.defineProperty(typedArray.prototype, "slice", {
+              value: function (begin, end) {
+                return new typedArray(this.subarray(begin, end));
+              },
+            });
           }
         }
+      );
 
-        var result = "";
-        for (var i = 0; i < len; i++) {
-          result += String.fromCharCode(buf[i]);
+      // Base64 decoder. RFC 4648, but it doesn't support ending "=" (it is stripped by the gulp script)
+      var B64_codes = [
+        255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255,
+        255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 62,
+        255, 255, 255, 63, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 255, 255, 255, 0, 255, 255, 255, 0, 1, 2, 3, 4, 5, 6,
+        7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 255, 255, 255, 255, 255, 255, 26, 27,
+        28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51,
+      ];
+      function B64_Len(str) {
+        return (3 * (str.length / 4)) | 0;
+      }
+      function B64_U8(str, from, len) {
+        if (from && from % 3 != 0) throw "Inv `from`";
+        var n = str.length;
+        len = len || 3 * (n / 4);
+        var result = new Uint8Array(len | 0);
+        // console.log("B64_U8", from, "(", from / 3 * 4, ")", len);
+        for (let i = from ? (from / 3) * 4 : 0, j = 0; j <= len; i += 4, j += 3) {
+          var buffer =
+            (B64_codes[str.charCodeAt(i)] << 18) |
+            (B64_codes[str.charCodeAt(i + 1)] << 12) |
+            (B64_codes[str.charCodeAt(i + 2)] << 6) |
+            B64_codes[str.charCodeAt(i + 3)];
+          result[j] = buffer >> 16;
+          result[j + 1] = (buffer >> 8) & 0xff;
+          result[j + 2] = buffer & 0xff;
         }
         return result;
-      };
-      var buf2string = function (buf, max) {
-        var i, out, c, c_len;
-        var len = max || buf.length;
-
-        // Reserve max possible length (2 words per char)
-        // NB: by unknown reasons, Array is significantly faster for
-        //     String.fromCharCode.apply than Uint16Array.
-        var utf16buf = new Array(len * 2);
-
-        for (out = 0, i = 0; i < len; ) {
-          c = buf[i++];
-          // quick process ascii
-          if (c < 0x80) {
-            utf16buf[out++] = c;
-            continue;
-          }
-
-          c_len = _utf8len[c];
-          // skip 5 & 6 byte codes
-          if (c_len > 4) {
-            utf16buf[out++] = 0xfffd;
-            i += c_len - 1;
-            continue;
-          }
-
-          // apply mask on first byte
-          c &= c_len === 2 ? 0x1f : c_len === 3 ? 0x0f : 0x07;
-          // join the rest
-          while (c_len > 1 && i < len) {
-            c = (c << 6) | (buf[i++] & 0x3f);
-            c_len--;
-          }
-
-          // terminated by end of string?
-          if (c_len > 1) {
-            utf16buf[out++] = 0xfffd;
-            continue;
-          }
-
-          if (c < 0x10000) {
-            utf16buf[out++] = c;
-          } else {
-            c -= 0x10000;
-            utf16buf[out++] = 0xd800 | ((c >> 10) & 0x3ff);
-            utf16buf[out++] = 0xdc00 | (c & 0x3ff);
-          }
-        }
-
-        return buf2binstring(utf16buf, out);
-      };
-
-      function zstdDecStr(b64) {
-        var b = binstring2buf(atob(b64));
-        return buf2string(fzstd.decompress(b));
       }
 
-      function zstdDecBin(b64) {
-        var b = binstring2buf(atob(b64));
-        return fzstd.decompress(b);
+      // Decompresses base64-encoded Zstd data into Uint8Array.
+      function Zstd_DecBin(str) {
+        return fzstd.decompress(B64_U8(str));
+      }
+
+      // Decompresses base64-encoded Zstd data into JS string.
+      function Zstd_DecStr(str) {
+        // Quick check if we can use fast array to bin string conversion
+        //
+        // - apply(Array) can fail on Android 2.2
+        // - apply(Uint8Array) can fail on iOS 5.1 Safari
+        //
+        var STR_APPLY_OK = true;
+        var STR_APPLY_UIA_OK = true;
+        var shrinkBuf = function (buf, size) {
+          if (buf.length === size) {
+            return buf;
+          }
+          if (buf.subarray) {
+            return buf.subarray(0, size);
+          }
+          buf.length = size;
+          return buf;
+        };
+        try {
+          String.fromCharCode.apply(null, [0]);
+        } catch (__) {
+          STR_APPLY_OK = false;
+        }
+        try {
+          String.fromCharCode.apply(null, new Uint8Array(1));
+        } catch (__) {
+          STR_APPLY_UIA_OK = false;
+        }
+        var buf2binstring = function (buf, len) {
+          // On Chrome, the arguments in a function call that are allowed is `65534`.
+          // If the length of the buffer is smaller than that, we can use this optimization,
+          // otherwise we will take a slower path.
+          if (len < 65534) {
+            if ((buf.subarray && STR_APPLY_UIA_OK) || (!buf.subarray && STR_APPLY_OK)) {
+              return String.fromCharCode.apply(null, shrinkBuf(buf, len));
+            }
+          }
+
+          var result = "";
+          for (var i = 0; i < len; i++) {
+            result += String.fromCharCode(buf[i]);
+          }
+          return result;
+        };
+        var buf2string = function (buf, max) {
+          var i, out, c, c_len;
+          var len = max || buf.length;
+
+          // Reserve max possible length (2 words per char)
+          // NB: by unknown reasons, Array is significantly faster for
+          //     String.fromCharCode.apply than Uint16Array.
+          var utf16buf = new Array(len * 2);
+
+          for (out = 0, i = 0; i < len; ) {
+            c = buf[i++];
+            // quick process ascii
+            if (c < 0x80) {
+              utf16buf[out++] = c;
+              continue;
+            }
+
+            c_len = _utf8len[c];
+            // skip 5 & 6 byte codes
+            if (c_len > 4) {
+              utf16buf[out++] = 0xfffd;
+              i += c_len - 1;
+              continue;
+            }
+
+            // apply mask on first byte
+            c &= c_len === 2 ? 0x1f : c_len === 3 ? 0x0f : 0x07;
+            // join the rest
+            while (c_len > 1 && i < len) {
+              c = (c << 6) | (buf[i++] & 0x3f);
+              c_len--;
+            }
+
+            // terminated by end of string?
+            if (c_len > 1) {
+              utf16buf[out++] = 0xfffd;
+              continue;
+            }
+
+            if (c < 0x10000) {
+              utf16buf[out++] = c;
+            } else {
+              c -= 0x10000;
+              utf16buf[out++] = 0xd800 | ((c >> 10) & 0x3ff);
+              utf16buf[out++] = 0xdc00 | (c & 0x3ff);
+            }
+          }
+
+          return buf2binstring(utf16buf, out);
+        };
+
+        return buf2string(Zstd_DecBin(str));
+      }
+
+      // Asynchronously converts ArrayBuffer to JS string
+      function ArrayBuffer_ToString(buf, callback) {
+        var bb = new Blob([new Uint8Array(buf)]);
+        var f = new FileReader();
+        f.onload = function (e) {
+          callback(e.target.result);
+        };
+        f.readAsText(bb);
       }
 
       // The Gulp script replaces XMLHttpRequest with ArchiveJsRequest to load files from the compressed data file (.._archive.js), see below.
@@ -122,6 +182,12 @@
       };
       ArchiveJsRequest.prototype.send = function () {
         var next = function () {
+          var time1, time2;
+          var logTime = function () {
+            var time3 = new Date().getTime();
+            console.log(self.url + ": decode " + (time2 - time1) + " ms, onload() " + (time3 - time2) + " ms");
+          };
+
           var self = this;
           if (typeof ARCHIVEJS_DATA === "undefined") {
             console.warn("⚠️⚠️⚠️ {{exe-name}}_archive.js is not loaded.");
@@ -130,26 +196,59 @@
             console.warn("⚠️⚠️⚠️ " + self.url + ": not found");
             self.onerror();
           } else {
+            var data = ARCHIVEJS_DATA[self.url];
             self.readyState = 4;
             self.status = 200;
-            var time1 = new Date().getTime();
-            if (self.responseType == "text" || self.responseType == "json") {
-              self.response = zstdDecStr(ARCHIVEJS_DATA[self.url]);
-            } else {
-              var data = zstdDecBin(ARCHIVEJS_DATA[self.url]);
+
+            time1 = new Date().getTime();
+
+            var compressedLen = B64_Len(data[1]);
+            var outBuf = new Uint8Array(data[0]);
+            var outPos = 0;
+            var zstdStream = new fzstd.Decompress(function (chunk, isLast) {
+              outBuf.set(chunk, outPos);
+              outPos += chunk.byteLength;
               self.onprogress({
                 lengthComputable: true,
-                total: data.length,
-                loaded: data.length,
+                total: data[0],
+                loaded: outPos,
               });
-              self.response = data;
-            }
-            var time2 = new Date().getTime();
-            self.onload();
-            var time3 = new Date().getTime();
-            console.log(self.url + ": decode " + (time2 - time1) + " ms, onload() " + (time3 - time2) + " ms");
+              if (outPos == data[0]) {
+                // Done
+                delete ARCHIVEJS_DATA[self.url]; // Free the memory (if it helps, actually)
+                if (self.responseType == "text" || self.responseType == "json") {
+                  ArrayBuffer_ToString(outBuf, function (text) {
+                    self.response = text;
+                    time2 = new Date().getTime();
+                    self.onload();
+                    logTime();
+                  });
+                } else {
+                  self.response = outBuf;
+                  time2 = new Date().getTime();
+                  self.onload();
+                  logTime();
+                }
+              }
+            });
+
+            var chunkLen = 33333;
+            var chunkPos = 0;
+            var pushChunk = function () {
+              chunkLen = Math.min(compressedLen - chunkPos, chunkLen);
+              zstdStream.push(B64_U8(data[1], chunkPos, chunkLen));
+              chunkPos += chunkLen;
+              if (chunkPos == compressedLen) {
+                // Last chunk
+                zstdStream.push(new Uint8Array(0), true);
+              } else {
+                setTimeout(pushChunk, 0);
+              }
+            };
+            setTimeout(pushChunk, 0);
           }
         }.bind(this);
+
         if (typeof ARCHIVEJS_DATA !== "undefined") {
           setTimeout(next, 0);
         } else {

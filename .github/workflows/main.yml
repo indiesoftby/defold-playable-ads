@@ -24,6 +24,10 @@ jobs:
         with:
           node-version: '14'
 
+      - name: Install Zstd
+        run: |
+          sudo apt-get install -y zstd
+
       - name: Build 🔧
         run: |
           lsb_release -a

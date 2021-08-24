@@ -35,7 +35,7 @@ You will need the following apps installed on your environment:
 ### Windows
 
 1. Download and install [Java 11](https://adoptopenjdk.net/).
-2. Download and unpack [Zstd for Windows 64-bit](https://github.com/facebook/zstd/releases/download/v1.5.0/zstd-v1.5.0-win64.zip). Put the `zstd.exe` executable to the `playable_ad` directory.
+2. Download and unpack [Zstd for Windows 64-bit](https://github.com/facebook/zstd/releases/download/v1.5.0/zstd-v1.5.0-win64.zip). Add the path to the `zstd.exe` executable to the PATH environment variable.
 3. Download [Node.js Windows Installer (.msi) for 64-bit](https://nodejs.org/en/download/) and install it.
 4. Open `cmd.exe` and run to install Gulp CLI:
 

@@ -387,7 +387,7 @@ function embedJs(dir) {
                 return;
               }
               const compressed = stripBase64(Buffer.from(zstdOutput).toString("base64"));
-              const replacement = "<script>eval(zstdDecStr('" + compressed + "'));</script>";
+              const replacement = "<script>eval(Zstd_DecStr('" + compressed + "'));</script>";
               output = output.split(match.searchMatch).join(replacement);
               logFilesize(match.filename, " zstd + base64 encoded", replacement.length);
               cb();

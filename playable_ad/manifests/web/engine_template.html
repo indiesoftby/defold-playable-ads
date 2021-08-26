@@ -46,7 +46,7 @@
         len = len || 3 * (n / 4);
         var result = new Uint8Array(len | 0);
         // console.log("B64_U8", from, "(", from / 3 * 4, ")", len);
-        for (let i = from ? (from / 3) * 4 : 0, j = 0; j <= len; i += 4, j += 3) {
+        for (var i = from ? (from / 3) * 4 : 0, j = 0; j <= len; i += 4, j += 3) {
           var buffer =
             (B64_codes[str.charCodeAt(i)] << 18) |
             (B64_codes[str.charCodeAt(i + 1)] << 12) |

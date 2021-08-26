@@ -59,8 +59,11 @@ const options = minimist(process.argv.slice(2), knownOptions);
 // Helper functions
 //
 
-function logFilesize(filename, type, size) {
+function logFilesize(filename, type, size, maxSize) {
   fancyLog("* " + chalk.cyan(filename) + type + " size " + chalk.magenta(size + " B (" + prettyBytes(size) + ")"));
+  if (maxSize && size > maxSize) {
+    fancyLog("⚠️ It exceeds the max size " + prettyBytes(maxSize));
+  }
 }
 
 function stripBase64(b64) {
@@ -407,10 +410,10 @@ function embedJs(dir) {
   });
 }
 
-function printSize(type) {
+function printSize(type, maxSize) {
   return through2.obj(function (file, _, cb) {
     if (file.isBuffer()) {
-      logFilesize(file.relative, type, file.contents.length);
+      logFilesize(file.relative, type, file.contents.length, maxSize);
     }
     cb(null, file);
   });
@@ -431,7 +434,7 @@ function bundlePlayableAds() {
         minifyJS: true,
       })
     )
-    .pipe(printSize(" resulting"))
+    .pipe(printSize(" resulting", 2 * 1024 * 1024))
     .pipe(dest(dir));
 }
 

@@ -3,7 +3,7 @@
 This repository contains a script for the [Gulp](https://gulpjs.com/) build system, which:
 1. Downloads [bob.jar](https://d.defold.com/stable/).
 2. Builds the project for the HTML5 platform using `bob.jar`.
-3. Combines all resources into **a single HTML file**. The asm.js binary of the Defold engine is compressed using zlib deflate.
+3. Combines all resources into **a single HTML file**. The asm.js binary of the Defold engine is compressed using Zstd and encoded with Base64.
 
 [**Open the build result**](https://aglitchman.github.io/defold-playable-ads/) online. Please note that it does not use any external resources as required.
 

@@ -15,6 +15,13 @@ Feel free to ask questions: [the topic about this asset is on the Defold forum](
 | -------------- | -------------- | ------------- |
 | 1.2.0          | 1.2.186        | Tested ✅     |
 
+### Supported Platforms
+
+| Platform | Status | Extra |
+| ---------| -------| ----- |
+| [Facebook](https://developers.facebook.com/tools/playable-preview/) | Supported ✅ |
+| [Unity Ads](https://unityads.unity3d.com/help/advertising/campaign-design-guide) | In Progress ⏩ | [Guide](https://storage.googleapis.com/unity-ads-aui-prod-deployments/external-app/UnityAds_Playable_guide.pdf) |
+
 ## About A Playable Ad
 
 A [playable ad](https://learn.g2crowd.com/playable-ads) is an interactive advertisement, mostly used to promote mobile games. A playable ad acts as a demo of the game (or product), allowing users to quickly play the game directly in the ad before downloading it.

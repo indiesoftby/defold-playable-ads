@@ -7,15 +7,6 @@
       if (window.msCrypto) {
         window.crypto = window.msCrypto;
       }
-      // IE11: String.endsWith
-      if (!String.prototype.endsWith) {
-        String.prototype.endsWith = function (search, this_len) {
-          if (this_len === undefined || this_len > this.length) {
-            this_len = this.length;
-          }
-          return this.substring(this_len - search.length, this_len) === search;
-        };
-      }
       // IE11, Chrome ≤45, Edge ≤14, Firefox ≤37: https://github.com/emscripten-core/emscripten/pull/11011/files
       [Int8Array, Uint8Array, Int16Array, Uint16Array, Int32Array, Uint32Array, Float32Array, Float64Array].forEach(
         function (typedArray) {

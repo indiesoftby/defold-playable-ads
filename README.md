@@ -13,7 +13,7 @@ Feel free to ask questions: [the topic about this asset is on the Defold forum](
 
 | Tool Version   | Defold Version | Status        |
 | -------------- | -------------- | ------------- |
-| 1.2.0          | 1.2.186        | Tested ✅     |
+| 1.2.1          | 1.2.187        | Tested ✅     |
 
 ### Supported Platforms
 

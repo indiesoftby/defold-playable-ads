@@ -9,8 +9,6 @@
     "url": "https://github.com/aglitchman/defold-playable-ads.git"
   },
   "devDependencies": {
-    "7zip-bin": "^5.1.1",
-    "@gfx/zopfli": "^1.0.15",
     "chalk": "^4.1.1",
     "fancy-log": "^1.3.3",
     "fzstd": "0.0.3",

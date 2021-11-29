@@ -318,7 +318,7 @@ function embedImages(dir) {
     if (file.isBuffer()) {
       const input = file.contents.toString();
       let output = input;
-      let matches = matchAll(input, /(var splash_image = ")(.+?\.(png|jpg))(")/g);
+      let matches = matchAll(input, /(url\(")(.+?\.(png|jpg))("\))/g);
       for (const match of matches) {
         const searchMatch = match[0];
         const filename = match[2];
@@ -329,7 +329,7 @@ function embedImages(dir) {
         const replacement = match[1] + dataUriData + match[4];
         output = output.split(searchMatch).join(replacement);
 
-        logFilesize(filename, " encoded", replacement.length);
+        logFilesize(filename, " base64 encoded", replacement.length);
       }
       file.contents = Buffer.from(output);
     }

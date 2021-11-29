@@ -116,3 +116,5 @@ Follow these steps to decrease the resulting size of the HTML file significantly
 ## License
 
 MIT.
+
+The splash uses an image from [iconfinder.com](https://www.iconfinder.com/icons/1222768/facebook_ads_facebook_marketing_marketing_icon).

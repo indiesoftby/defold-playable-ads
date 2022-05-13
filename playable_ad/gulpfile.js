@@ -3,6 +3,7 @@
 //
 
 let projectTitle = "Unnamed project"; // updated by parseProjectConfig()
+let sanitisedTitle = projectTitle;
 
 const playableAdDir = "playable_ad";
 const projectDir = "..";
@@ -133,8 +134,10 @@ function parseProjectConfig(cb) {
   const config = ini.parse(fs.readFileSync(projectDir + "/game.project", "utf-8"));
   if (config.project && config.project.title) {
     projectTitle = config.project.title;
+	sanitisedTitle = projectTitle.replace(new RegExp("[^a-zA-Z0-9_]", 'g'), "");
   }
   fancyLog("* Project title is '" + chalk.cyan(projectTitle) + "'");
+  fancyLog("* Sanitised title is '" + chalk.cyan(sanitisedTitle) + "'");
   cb();
 }
 
@@ -308,8 +311,9 @@ function copyFzstd() {
 
 function bundleArchiveJs() {
   const dir = bundleJsWebPath + "/" + projectTitle;
-  return src([archiveDir + "/*", projectTitle + "_asmjs.js"], { base: dir + "/", cwd: dir + "/" })
-    .pipe(combineFilesToBase64(projectTitle + "_archive.js"))
+  
+  return src([archiveDir + "/*", sanitisedTitle + "_asmjs.js"], { base: dir + "/", cwd: dir + "/" })
+    .pipe(combineFilesToBase64(sanitisedTitle + "_archive.js"))
     .pipe(dest(dir + "/"));
 }
 
@@ -424,7 +428,7 @@ function bundlePlayableAds() {
   return src(dir + "/index.html")
     .pipe(embedImages(dir))
     .pipe(embedJs(dir))
-    .pipe(rename(projectTitle + ".html"))
+    .pipe(rename(sanitisedTitle + ".html"))
     .pipe(
       htmlmin({
         collapseWhitespace: true,

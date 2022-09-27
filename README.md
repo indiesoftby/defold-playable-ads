@@ -90,6 +90,7 @@ The resulting HTML file is located at `/playable_ad/build/output_js-web/YOUR_PRO
 You can pass the following arguments from the command line to the script:
 
 ```bash
+--exclude-wasm <arg>            Exclude WebAssembly files: true/false (default = true).
 --embed-archive-js <arg>        Embed `_archive.js` file: true/false (default = true).
 
 # The following arguments passed to Bob.jar as is:

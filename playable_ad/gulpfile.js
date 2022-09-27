@@ -44,9 +44,10 @@ const Vinyl = require("vinyl");
 //
 
 const knownOptions = {
-  boolean: ["embed-archive-js"],
+  boolean: ["exclude-wasm", "embed-archive-js"],
   string: ["build-server", "settings", "variant", "texture-compression"],
   default: {
+    "exclude-wasm": true,
     "embed-archive-js": true,
     "build-server": "https://build.defold.com",
     "texture-compression": "true",
@@ -63,7 +64,7 @@ const options = minimist(process.argv.slice(2), knownOptions);
 function logFilesize(filename, type, size, maxSize) {
   fancyLog("* " + chalk.cyan(filename) + type + " size " + chalk.magenta(size + " B (" + prettyBytes(size) + ")"));
   if (maxSize && size > maxSize) {
-    fancyLog("⚠️ It exceeds the max size " + prettyBytes(maxSize));
+    fancyLog("⚠️⚠️⚠️ The result exceeds " + prettyBytes(maxSize));
   }
 }
 
@@ -79,14 +80,15 @@ function stripBase64(b64) {
 
 function modifyAndMinifyJs(filename, contents) {
   if (filename == "dmloader.js") {
-    contents = contents.replace(
-      // hack for UglifyJS minifier
-      /(isWASMSupported:)(.|[\r\n])+?}\)\(\),/,
-      "$1 false,"
-    );
+    if (options["exclude-wasm"] == true) {
+      contents = contents.replace(
+        /(isWASMSupported:)(.|[\r\n])+?}\)\(\),/,
+        "$1 false,"
+      );
+    }
 
     contents = contents.replace(
-      // custom XMLHttpRequest
+      // We use our custom XMLHttpRequest to load files from the embedded archive.
       /XMLHttpRequest/g,
       "ArchiveJsRequest"
     );
@@ -311,8 +313,16 @@ function copyFzstd() {
 
 function bundleArchiveJs() {
   const dir = bundleJsWebPath + "/" + projectTitle;
-  
-  return src([archiveDir + "/*", sanitisedTitle + "_asmjs.js"], { base: dir + "/", cwd: dir + "/" })
+
+  let files = [];
+  if (options["exclude-wasm"] == false) {
+    files.push(sanitisedTitle + "_wasm.js");
+    files.push(sanitisedTitle + ".wasm");
+  }
+  files.push(sanitisedTitle + "_asmjs.js");
+  files.push(archiveDir + "/*");
+
+  return src(files, { base: dir + "/", cwd: dir + "/" })
     .pipe(combineFilesToBase64(sanitisedTitle + "_archive.js"))
     .pipe(dest(dir + "/"));
 }

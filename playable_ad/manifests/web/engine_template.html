@@ -2,24 +2,6 @@
   <head>
     <script data-src="fzstd.js" embed></script>
     <script>
-      // Temporary fix to be able to test the game on IE11
-      // IE11: Mbed TLS requires /dev/random to run, but https://github.com/emscripten-core/emscripten/pull/7096
-      if (window.msCrypto) {
-        window.crypto = window.msCrypto;
-      }
-      // IE11, Chrome ≤45, Edge ≤14, Firefox ≤37: https://github.com/emscripten-core/emscripten/pull/11011/files
-      [Int8Array, Uint8Array, Int16Array, Uint16Array, Int32Array, Uint32Array, Float32Array, Float64Array].forEach(
-        function (typedArray) {
-          if (!typedArray.prototype.slice) {
-            Object.defineProperty(typedArray.prototype, "slice", {
-              value: function (begin, end) {
-                return new typedArray(this.subarray(begin, end));
-              },
-            });
-          }
-        }
-      );
-
       // Base64 decoder. RFC 4648, but it doesn't support ending "=" (it is stripped by the gulp script)
       var B64_codes = [
         255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255,

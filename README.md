@@ -13,7 +13,7 @@ Feel free to ask questions: [the topic about this asset is on the Defold forum](
 
 | Tool Version   | Defold Version | Status        |
 | -------------- | -------------- | ------------- |
-| 1.2.3          | 1.3.2          | Tested ✅     |
+| 1.2.4          | 1.3.6          | Tested ✅     |
 
 ### Supported Platforms
 
@@ -104,7 +104,7 @@ i.e. run `gulp --embed-archive-js=false` to build a playable ad with the two fil
 * `/playable_ad/build/output_js-web/YOUR_PROJECT_TITLE/YOUR_PROJECT_TITLE.html`
 * `/playable_ad/build/output_js-web/YOUR_PROJECT_TITLE/YOUR_PROJECT_TITLE_archive.js`
 
-### How to shrink your game size
+### How To Shrink Your Game Size
 
 Follow these steps to decrease the resulting size of the HTML file significantly:
 
@@ -112,6 +112,8 @@ Follow these steps to decrease the resulting size of the HTML file significantly
 2. Keep only the core mechanic of your game and all assets that it requires.
 3. Toy with the [`Project` / `Compress Archive`](https://defold.com/manuals/project-settings/) option. Zstd, used by this tool, compresses plain data better than a compressed LZ4 stream.
 4. Install the latest version of the [Zstd executable](https://github.com/facebook/zstd/releases) (i.e. Zstd 1.5.0 has better compression than Zstd 1.4.x).
+
+And, the last tip: set [HTML5 heap size](https://defold.com/manuals/project-settings/#heap-size) as small as possible (minimum is 32MB, default is 256MB) to allow your game to run on low-end Android devices.
 
 ## License
 

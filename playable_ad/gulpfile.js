@@ -44,10 +44,10 @@ const Vinyl = require("vinyl");
 //
 
 const knownOptions = {
-  boolean: ["exclude-wasm", "embed-archive-js"],
-  string: ["build-server", "settings", "variant", "texture-compression"],
+  boolean: ["embed-archive-js"],
+  string: ["architectures", "build-server", "settings", "variant", "texture-compression"],
   default: {
-    "exclude-wasm": true,
+    architectures: "wasm-web",
     "embed-archive-js": true,
     "build-server": "https://build.defold.com",
     "texture-compression": "true",
@@ -56,6 +56,7 @@ const knownOptions = {
 };
 
 const options = minimist(process.argv.slice(2), knownOptions);
+const architectures = options["architectures"].split(",").map(v => v.trim());
 
 //
 // Helper functions
@@ -80,7 +81,7 @@ function stripBase64(b64) {
 
 function modifyAndMinifyJs(filename, contents) {
   if (filename == "dmloader.js") {
-    if (options["exclude-wasm"] == true) {
+    if (!architectures.includes("wasm-web")) {
       contents = contents.replace(
         /(isWASMSupported:)(.|[\r\n])+?}\)\(\),/,
         "$1 false,"
@@ -244,6 +245,7 @@ function buildGame(cb) {
     [
       "--bundle-output", playableAdDir + "/" + bundleJsWebPath,
       "--platform", "js-web",
+      "--architectures", architectures.join(","),
       "--archive",
       "distclean",
       "resolve",
@@ -315,11 +317,13 @@ function bundleArchiveJs() {
   const dir = bundleJsWebPath + "/" + projectTitle;
 
   let files = [];
-  if (options["exclude-wasm"] == false) {
+  if (architectures.includes("wasm-web")) {
     files.push(sanitisedTitle + "_wasm.js");
     files.push(sanitisedTitle + ".wasm");
   }
-  files.push(sanitisedTitle + "_asmjs.js");
+  if (architectures.includes("js-web")) {
+    files.push(sanitisedTitle + "_asmjs.js");
+  }
   files.push(archiveDir + "/*");
 
   return src(files, { base: dir + "/", cwd: dir + "/" })

@@ -1,13 +1,13 @@
 path_settings {
   path: "**"
-  profile: "Default"
+  profile: "RGBA 16BPP NO MIP"
 }
 profiles {
-  name: "Default"
+  name: "RGBA 16BPP NO MIP"
   platforms {
     os: OS_ID_GENERIC
     formats {
-      format: TEXTURE_FORMAT_RGBA
+      format: TEXTURE_FORMAT_RGBA_16BPP
       compression_level: BEST
       compression_type: COMPRESSION_TYPE_DEFAULT
     }

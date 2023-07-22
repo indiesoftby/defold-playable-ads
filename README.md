@@ -5,7 +5,9 @@ This repository contains a script for the [Gulp](https://gulpjs.com/) build syst
 2. Builds the project for the HTML5 platform using `bob.jar`.
 3. Combines all resources into **a single HTML file**. The asm.js binary of the Defold engine is compressed using Zstd and encoded with Base64.
 
-[**Open the build result**](https://aglitchman.github.io/defold-playable-ads/) online. Please note that it does not use any external resources as required.
+[**Open the build result**](https://aglitchman.github.io/defold-playable-ads/) online. 
+
+Please note that the example build doesn't use any external resources as required. The total size is less than 1 megabyte! In this example, BasisU Decoder, Physics, Live Update are disabled in the engine.
 
 ## Current Status
 
@@ -13,7 +15,7 @@ Feel free to ask questions: [the topic about this asset is on the Defold forum](
 
 | Tool Version   | Defold Version | Status        |
 | -------------- | -------------- | ------------- |
-| 1.2.5          | 1.4.8          | Tested ✅     |
+| 1.3.0          | 1.4.8          | Tested ✅     |
 
 ### Supported Platforms
 
@@ -90,7 +92,7 @@ The resulting HTML file is located at `/playable_ad/build/output_js-web/YOUR_PRO
 You can pass the following arguments from the command line to the script:
 
 ```bash
---exclude-wasm <arg>            Exclude WebAssembly files: true/false (default = true).
+--architectures <arg>           Comma separated list of architectures to include: js-web,wasm-web (default = wasm-web).
 --embed-archive-js <arg>        Embed `_archive.js` file: true/false (default = true).
 
 # The following arguments passed to Bob.jar as is:

@@ -1,0 +1,66 @@
+platforms:
+    armv7-ios:
+        context:
+            excludeLibs: [physics, LinearMath, BulletDynamics, BulletCollision, Box2D, profilerext, record, vpx, liveupdate, graphics_transcoder_basisu, basis_transcoder]
+            excludeSymbols: [ProfilerExt]
+            libs: [physics_null, profilerext_null, record_null, liveupdate_null, graphics_transcoder_null]
+    arm64-ios:
+        context:
+            excludeLibs: [physics, LinearMath, BulletDynamics, BulletCollision, Box2D, profilerext, record, vpx, liveupdate, graphics_transcoder_basisu, basis_transcoder]
+            excludeSymbols: [ProfilerExt]
+            libs: [physics_null, profilerext_null, record_null, liveupdate_null, graphics_transcoder_null]
+    x86_64-ios:
+        context:
+            excludeLibs: [physics, LinearMath, BulletDynamics, BulletCollision, Box2D, profilerext, record, vpx, liveupdate, graphics_transcoder_basisu, basis_transcoder]
+            excludeSymbols: [ProfilerExt]
+            libs: [physics_null, profilerext_null, record_null, liveupdate_null, graphics_transcoder_null]
+    armv7-android:
+        context:
+            excludeLibs: [physics, LinearMath, BulletDynamics, BulletCollision, Box2D, profilerext, record, vpx, liveupdate, graphics_transcoder_basisu, basis_transcoder]
+            excludeSymbols: [ProfilerExt]
+            libs: [physics_null, profilerext_null, record_null, liveupdate_null, graphics_transcoder_null]
+    arm64-android:
+        context:
+            excludeLibs: [physics, LinearMath, BulletDynamics, BulletCollision, Box2D, profilerext, record, vpx, liveupdate, graphics_transcoder_basisu, basis_transcoder]
+            excludeSymbols: [ProfilerExt]
+            libs: [physics_null, profilerext_null, record_null, liveupdate_null, graphics_transcoder_null]
+    x86_64-osx:
+        context:
+            excludeLibs: [physics, LinearMath, BulletDynamics, BulletCollision, Box2D, profilerext, record, vpx, liveupdate, graphics_transcoder_basisu, basis_transcoder]
+            excludeSymbols: [ProfilerExt]
+            libs: [physics_null, profilerext_null, record_null, liveupdate_null, graphics_transcoder_null]
+    x86_64-linux:
+        context:
+            excludeLibs: [physics, LinearMath, BulletDynamics, BulletCollision, Box2D, profilerext, record, vpx, liveupdate, graphics_transcoder_basisu, basis_transcoder]
+            excludeSymbols: [ProfilerExt]
+            libs: [physics_null, profilerext_null, record_null, liveupdate_null, graphics_transcoder_null]
+    x86-win32:
+        context:
+            excludeLibs: [libgraphics_transcoder_basisu, libbasis_transcoder, libphysics, libLinearMath, libBulletDynamics, libBulletCollision, libBox2D, libprofilerext, librecord, vpx, libliveupdate]
+            excludeSymbols: [ProfilerExt]
+            symbols: []
+            libs: [libgraphics_transcoder_null.lib, libphysics_null.lib, libprofilerext_null.lib, librecord_null.lib, libliveupdate_null.lib]
+            linkFlags: []
+    x86_64-win32:
+        context:
+            excludeLibs: [libgraphics_transcoder_basisu, libbasis_transcoder, libphysics, libLinearMath, libBulletDynamics, libBulletCollision, libBox2D, libprofilerext, librecord, vpx, libliveupdate]
+            excludeSymbols: [ProfilerExt]
+            symbols: []
+            libs: [libgraphics_transcoder_null.lib, libphysics_null.lib, libprofilerext_null.lib, librecord_null.lib, libliveupdate_null.lib]
+            linkFlags: []
+    js-web:
+        context:
+            excludeLibs: [graphics_transcoder_basisu, basis_transcoder, physics, LinearMath, BulletDynamics, BulletCollision, Box2D, profilerext, record, vpx, liveupdate]
+            excludeJsLibs: []
+            excludeSymbols: [ProfilerExt]
+            symbols: []
+            libs: [graphics_transcoder_null, physics_null, profilerext_null, record_null, liveupdate_null]
+            linkFlags: []
+    wasm-web:
+        context:
+            excludeLibs: [graphics_transcoder_basisu, basis_transcoder, physics, LinearMath, BulletDynamics, BulletCollision, Box2D, profilerext, record, vpx, liveupdate]
+            excludeJsLibs: []
+            excludeSymbols: [ProfilerExt]
+            symbols: []
+            libs: [graphics_transcoder_null, physics_null, profilerext_null, record_null, liveupdate_null]
+            linkFlags: []

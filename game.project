@@ -1,6 +1,6 @@
 [project]
 title = playable_ad_example
-version = 1.2.0
+version = 1.3.0
 
 [bootstrap]
 main_collection = /example/main.collectionc
@@ -37,4 +37,7 @@ splash_image = /example/web/splash.png
 
 [graphics]
 texture_profiles = /example/profiles/no_mipmaps.texture_profiles
+
+[native_extension]
+app_manifest = /example/no_basis_liveupdate_physics.appmanifest
 

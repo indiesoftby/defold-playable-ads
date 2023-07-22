@@ -245,7 +245,7 @@ function buildGame(cb) {
     [
       "--bundle-output", playableAdDir + "/" + bundleJsWebPath,
       "--platform", "js-web",
-      "--architectures", architectures.join(","),
+      // "--architectures", architectures.join(","),
       "--archive",
       "distclean",
       "resolve",

@@ -13,7 +13,7 @@ Feel free to ask questions: [the topic about this asset is on the Defold forum](
 
 | Tool Version   | Defold Version | Status        |
 | -------------- | -------------- | ------------- |
-| 1.2.4          | 1.3.6          | Tested ✅     |
+| 1.2.5          | 1.4.8          | Tested ✅     |
 
 ### Supported Platforms
 
@@ -35,14 +35,14 @@ Accepted sizes for HTML5 playable ad vary between ad networks:
 
 You will need the following apps installed on your environment:
 - Node.js 12 or newer.
-- Java 11.
+- Java 17 (Defold >=1.4.8).
 - Zstd 1.4 or newer.
 - Gulp CLI.
 
 ### Windows
 
-1. Download and install [Java 11](https://adoptopenjdk.net/).
-2. Download and unpack [Zstd for Windows 64-bit](https://github.com/facebook/zstd/releases/download/v1.5.0/zstd-v1.5.0-win64.zip). Add the path to the `zstd.exe` executable to the PATH environment variable.
+1. Download and install [Java 17](https://adoptium.net/).
+2. Download and unpack [Zstd for Windows 64-bit](https://github.com/facebook/zstd/releases/download/v1.5.5/zstd-v1.5.5-win64.zip). Add the path to the `zstd.exe` executable to the PATH environment variable.
 3. Download [Node.js Windows Installer (.msi) for 64-bit](https://nodejs.org/en/download/) and install it.
 4. Open `cmd.exe` and run to install Gulp CLI:
 
@@ -53,7 +53,7 @@ npm install --global gulp-cli
 ### Ubuntu/Debian or [Windows Subsystem for Linux (WSL)](https://docs.microsoft.com/en-us/windows/wsl/about)
 
 ```
-sudo apt install --no-install-recommends openjdk-11-jre-headless nodejs npm zstd
+sudo apt install --no-install-recommends openjdk-17-jre-headless nodejs npm zstd
 
 npm install --global gulp-cli
 ```
@@ -63,9 +63,9 @@ npm install --global gulp-cli
 Install [brew](https://brew.sh/) and paste that in a macOS Terminal prompt:
 
 ```
-brew install node@14
-brew install openjdk@11
-brew install zstd@1.5.0
+brew install node@18
+brew install openjdk@17
+brew install zstd@1.5.5
 
 npm install --global gulp-cli
 ```

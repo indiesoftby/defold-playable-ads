@@ -19,13 +19,13 @@ jobs:
       - name: Install Java ♨️
         uses: actions/setup-java@v2
         with:
-          distribution: "adopt"
-          java-version: "11"
+          distribution: "temurin"
+          java-version: "17"
 
       - name: Install Node
         uses: actions/setup-node@v2
         with:
-          node-version: '14'
+          node-version: '18'
 
       - name: Install Zstd
         run: |

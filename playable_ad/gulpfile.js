@@ -327,6 +327,17 @@ function bundleArchiveJs() {
     .pipe(dest(dir + "/"));
 }
 
+function removeRunningFromFileWarning() {
+  return through2.obj(function (file, _, cb) {
+    if (file.isBuffer()) {
+      const input = file.contents.toString();
+      const output = input.replace('window.location.href.startsWith("file://")', 'false');
+      file.contents = Buffer.from(output);
+    }
+    cb(null, file);
+  });
+}
+
 function embedImages(dir) {
   return through2.obj(function (file, _, cb) {
     if (file.isBuffer()) {
@@ -436,6 +447,7 @@ function printSize(type, maxSize) {
 function bundlePlayableAds() {
   const dir = bundleJsWebPath + "/" + projectTitle;
   return src(dir + "/index.html")
+    .pipe(removeRunningFromFileWarning())
     .pipe(embedImages(dir))
     .pipe(embedJs(dir))
     .pipe(rename(sanitisedTitle + ".html"))

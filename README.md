@@ -1,4 +1,8 @@
+[![Defold for Playable Ads](cover.jpg)](https://github.com/indiesoftby/defold-playable-ads/)
+
 # Defold for Playable Ads
+
+Develop and build playable ads with the Defold game engine!
 
 This repository contains a script for the [Gulp](https://gulpjs.com/) build system, which:
 1. Downloads [bob.jar](https://d.defold.com/stable/).

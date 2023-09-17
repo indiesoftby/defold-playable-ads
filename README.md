@@ -5,7 +5,7 @@ This repository contains a script for the [Gulp](https://gulpjs.com/) build syst
 2. Builds the project for the HTML5 platform using `bob.jar`.
 3. Combines all resources into **a single HTML file**. The asm.js binary of the Defold engine is compressed using Zstd and encoded with Base64.
 
-[**Open the build result**](https://aglitchman.github.io/defold-playable-ads/) online. 
+[**Open the build result**](https://indiesoftby.github.io/defold-playable-ads/) online. 
 
 Please note that the example build doesn't use any external resources as required. The total size is less than 1 megabyte! In this example, BasisU Decoder, Physics, Live Update are disabled in the engine.
 
@@ -111,12 +111,12 @@ i.e. run `gulp --embed-archive-js=false` to build a playable ad with the two fil
 
 Follow these steps to decrease the resulting size of the HTML file significantly:
 
-1. Use the [Defold App Manifest generator](https://britzl.github.io/manifestation/) to keep only the necessary parts of the engine.
-2. Keep only the core mechanic of your game and all assets that it requires.
-3. Toy with the [`Project` / `Compress Archive`](https://defold.com/manuals/project-settings/) option. Zstd, used by this tool, compresses plain data better than a compressed LZ4 stream.
-4. Install the latest version of the [Zstd executable](https://github.com/facebook/zstd/releases) (i.e. Zstd 1.5.0 has better compression than Zstd 1.4.x).
+1. Customize `.appmanifest` to keep only the necessary parts of the engine.
+2. Keep only the core mechanic of your game and all assets that it requires. Remove everything else!
+3. Install the latest version of the [Zstd executable](https://github.com/facebook/zstd/releases) (i.e. Zstd 1.5.0 has better compression than Zstd 1.4.x).
 
-And, the last tip: set [HTML5 heap size](https://defold.com/manuals/project-settings/#heap-size) as small as possible (minimum is 32MB, default is 256MB) to allow your game to run on low-end Android devices.
+> [!IMPORTANT]
+> And, the last tip and the most important: set [HTML5 heap size](https://defold.com/manuals/project-settings/#heap-size) as small as possible (**minimum is 32MB**, default is 256MB) to allow your game to run on low-end Android devices.
 
 ## License
 

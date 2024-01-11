@@ -56,6 +56,9 @@ You will need the following apps installed on your environment:
 npm install --global gulp-cli
 ```
 
+> [!NOTE]
+> We recommend using Windows Terminal to see the coloured log. If you use PowerShell to run your scripts, run `gulp --no-color` to avoid the problem when the text colour matches the background colour.
+
 ### Ubuntu/Debian or [Windows Subsystem for Linux (WSL)](https://docs.microsoft.com/en-us/windows/wsl/about)
 
 ```

@@ -19,14 +19,15 @@ Feel free to ask questions: [the topic about this asset is on the Defold forum](
 
 | Tool Version   | Defold Version | Status        |
 | -------------- | -------------- | ------------- |
-| 1.3.0          | 1.5.0          | Tested ✅     |
+| 1.3.0          | 1.6.3          | Tested ✅     |
 
 ### Supported Platforms
 
-| Platform | Status | Extra |
-| ---------| -------| ----- |
+| Platform | Status |
+| ---------| -------|
 | [Facebook](https://developers.facebook.com/tools/playable-preview/) | Supported ✅ |
-| [Unity Ads](https://unityads.unity3d.com/help/advertising/campaign-design-guide), [AppLovin](https://p.applov.in/playablePreview?create=1&qr=1), etc | Can be done on request ⏩ |  |
+| [Unity Ads](https://docs.unity.com/acquire/en-us/manual/playable-ads-specifications) | Supported ✅ |
+| AppLovin, Snapchat, etc | Not tested. Can be done on request ⏩ |
 
 ## About A Playable Ad
 
@@ -35,7 +36,7 @@ A [playable ad](https://learn.g2crowd.com/playable-ads) is an interactive advert
 Accepted sizes for HTML5 playable ad vary between ad networks:
 1. [Facebook specifications for Playable Ads](https://www.facebook.com/business/help/412951382532338?helpref=faq_content) require that there be a single file for playable ad that contains all assets as part of that single HTML file and assets should be data uri compressed. Also playable asset size should be less than 2MB. And Facebook has started accepting .zip archives with up to 5MB since 2020.
 2. [Google](https://support.google.com/google-ads/answer/9981650?hl=en) requires a .ZIP file with a maximum size of 5MB and no more than 512 files within the .ZIP. Plus .ZIP files can contain the following formats: HTML, CSS, JS, GIF, PNG, JPG, JPEG, SVG.
-3. [AppLovin](https://p.applov.in/playablePreview?create=1&qr=1), and Unity Ads require a single HTML file. The maximum ad size is 5MB.
+3. [AppLovin](https://p.applov.in/playablePreview?create=1&qr=1), and [Unity Ads](https://docs.unity.com/acquire/en-us/manual/playable-ads-specifications) require a single HTML file. The maximum ad size is 5MB.
 
 ## Required Prerequisites
 

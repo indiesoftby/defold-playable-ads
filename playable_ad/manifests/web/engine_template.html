@@ -269,6 +269,11 @@
         // Therefore, we override this function to figure that:
         const old_preloadAndCallMain = Module._preloadAndCallMain;
         Module._preloadAndCallMain = function () {
+          if (!Module._archiveLoaded) {
+            old_preloadAndCallMain();
+            return;
+          }
+
           // Wait for the SDK to become ready
           if (mraid.getState() === "loading") {
             mraid.addEventListener("ready", onSdkReady);
@@ -278,18 +283,26 @@
         };
 
         let started = false;
+        let paused = false;
         function startGame() {
           console.log("mraid support: start game.");
           if (!started) {
+            started = true;
             old_preloadAndCallMain();
           } else {
-            // CALL API TO UNPAUSE?!
+            if (paused) {
+              paused = false;
+              GLFW.onFocusChanged(1);
+            }
           }
         }
 
         function pauseGame() {
           console.log("mraid support: pause game.");
-            // CALL API TO PAUSE?!
+          if (!paused) {
+            paused = true;
+            GLFW.onFocusChanged(0);
+          }
         }
 
         function viewableChangeHandler(viewable) {

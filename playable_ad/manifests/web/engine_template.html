@@ -228,20 +228,91 @@
           window.addEventListener("load", next);
         }
       };
-
-      // FB requires to implement the call `FbPlayableAd.onCTAClick` in the JS code. Use it from the Defold like `html5.run("FbPlayableAd_onCTAClick()")`.
-      function FbPlayableAd_onCTAClick() {
-        try {
-          FbPlayableAd.onCTAClick();
-        } catch (e) {
-          console.error(e);
-        }
-      }
     </script>
   </head>
   <body>
     <div id="running-from-file-warning" merge="keep"></div>
     <script id="engine-loader" src="dmloader.js" embed="compress"></script>
     <script data-src="{{exe-name}}_archive.js" embed></script>
+    <script id="engine-setup" type="text/javascript">
+      // The playable ad verification system of ad platforms require
+      // the target URL to be exposed directly in the JS code.
+      // That's we have to place `mraid.open()` and `FbPlayableAd.onCTAClick()` in this function.
+      function doClick() {
+        if (window.FbPlayableAd) {
+          // If the advert is running on Facebook, we have to call this function on click:
+          FbPlayableAd.onCTAClick();
+        } else if (window.mraid) {
+          // If `mraid` is available, the ad is running on Unity Ads etc.
+          // Let's detect the platform from User Agent
+          var userAgent = navigator.userAgent || navigator.vendor;
+          var url = "https://itunes.apple.com/"; // <-- PUT HERE YOUR APP STORE URL
+          var androidUrl = "https://play.google.com/store/"; // <-- PUT HERE YOUR GOOGLE PLAY URL
+          if (/android/i.test(userAgent)) {
+            url = androidUrl;
+          }
+          mraid.open(url);
+        } else {
+          console.warn("Click! But the platform is unknown.");
+        }
+      }
+
+      // mraid Support
+      // -------------
+      // Based on the example from https://docs.unity.com/acquire/en-us/manual/playable-ads-best-practices
+      // and the guide https://storage.googleapis.com/unity-ads-aui-prod-deployments/external-app/UnityAds_Playable_guide.pdf
+
+      // The main point is that mraid is injected by their webview and we can just use the `mraid.*` methods.
+      // If `mraid` is available, then it's Unity Ads or other mraid-based ad system.
+      if (window.mraid) {
+        // Defold does not currently have a public API to hook the game startup.
+        // Therefore, we override this function to figure that:
+        const old_preloadAndCallMain = Module._preloadAndCallMain;
+        Module._preloadAndCallMain = function () {
+          // Wait for the SDK to become ready
+          if (mraid.getState() === "loading") {
+            mraid.addEventListener("ready", onSdkReady);
+          } else {
+            onSdkReady();
+          }
+        };
+
+        let started = false;
+        function startGame() {
+          console.log("mraid support: start game.");
+          if (!started) {
+            old_preloadAndCallMain();
+          } else {
+            // CALL API TO UNPAUSE?!
+          }
+        }
+
+        function pauseGame() {
+          console.log("mraid support: pause game.");
+            // CALL API TO PAUSE?!
+        }
+
+        function viewableChangeHandler(viewable) {
+          // start/pause/resume gameplay, stop/play sounds
+          if(viewable) {
+            startGame();
+          } else {
+            pauseGame();
+          }
+        }
+
+        function onSdkReady() {
+          console.log("mraid support: SDK is ready.");
+          mraid.addEventListener("viewableChange", viewableChangeHandler);
+
+          // Wait for the ad to become viewable for the first time
+          if (mraid.isViewable()) {
+            startGame();
+          }
+        }
+
+        console.log("mraid support: hook installed.");
+      }
+    </script>
   </body>
 </html>

@@ -1,7 +1,28 @@
 
 local function call_to_action(self)
 	if html5 then
-		html5.run("FbPlayableAd_onCTAClick()")
+		html5.run([[
+			try {
+				if (window.FbPlayableAd) {
+					// If the advert is running on Facebook, we have to call this function on click:
+					FbPlayableAd.onCTAClick();
+				} else if (window.mraid) {
+					// `mraid` is available, when the ad is running on Unity Ads etc.
+					// Let's detect the platform from User Agent
+					var userAgent = navigator.userAgent || navigator.vendor;
+					var url = "https://itunes.apple.com/"; // <-- PUT HERE YOUR APP STORE URL
+					var androidUrl = "https://play.google.com/store/"; // <-- PUT HERE YOUR GOOGLE PLAY URL
+					if (/android/i.test(userAgent)) {
+						url = androidUrl;
+					}
+					mraid.open(url);
+				} else {
+					console.warn("Unknown platform.");
+				}
+			} catch (e) {
+				console.warn(e);
+			}
+		]])
 	end
 end
 

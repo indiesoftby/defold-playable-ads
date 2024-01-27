@@ -1,4 +1,48 @@
+--
+-- Local functions
+--
+
+local function toggle_music(self, enabled)
+	if enabled then
+		if not self.playing then
+			self.playing = true
+			sound.play("/music#sound")
+		end
+	else
+		if self.playing then
+			self.playing = false
+			sound.stop("/music#sound")
+		end
+	end
+end
+
+local function window_callback(self, event, data)
+	if event == window.WINDOW_EVENT_FOCUS_LOST then
+		print("window.WINDOW_EVENT_FOCUS_LOST")
+		toggle_music(self, false)
+	elseif event == window.WINDOW_EVENT_FOCUS_GAINED then
+		print("window.WINDOW_EVENT_FOCUS_GAINED")
+		toggle_music(self, true)
+	elseif event == window.WINDOW_EVENT_ICONIFIED then
+		print("window.WINDOW_EVENT_ICONIFIED")
+	elseif event == window.WINDOW_EVENT_DEICONIFIED then
+		print("window.WINDOW_EVENT_DEICONIFIED")
+	elseif event == window.WINDOW_EVENT_RESIZED then
+	end
+end
+
+--
+-- Script
+--
+
 function init(self)
+	window.set_listener(window_callback)
+
+	toggle_music(self, true)
+	go.set("/music", "euler.z", 20)
+	go.animate("/music", "euler.z", go.PLAYBACK_LOOP_PINGPONG, -20, go.EASING_INCUBIC, 0.7)
+	go.animate("/music", "scale", go.PLAYBACK_LOOP_PINGPONG, 1.2, go.EASING_INCUBIC, 0.7)
+
 	msg.post(".", "acquire_input_focus")
 
 	msg.post("@render:/", "clear_color", { color = vmath.vector4(0xEB / 255, 0xEB / 255, 0xEB / 255, 1.0) })

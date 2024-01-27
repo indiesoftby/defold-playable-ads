@@ -131,3 +131,11 @@ Follow these steps to decrease the resulting size of the HTML file significantly
 MIT.
 
 The splash uses an image from [iconfinder.com](https://www.iconfinder.com/icons/1222768/facebook_ads_facebook_marketing_marketing_icon).
+
+The included music credits:
+```
+Silly Intro by Alexander Nakarada | https://creatorchords.com
+Music promoted by https://www.chosic.com/free-music/all/free-music/
+Attribution 4.0 International (CC BY 4.0)
+https://creativecommons.org/licenses/by/4.0/
+```

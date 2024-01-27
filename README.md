@@ -19,7 +19,7 @@ Feel free to ask questions: [the topic about this asset is on the Defold forum](
 
 | Tool Version   | Defold Version | Status        |
 | -------------- | -------------- | ------------- |
-| 1.3.0          | 1.6.3          | Tested ✅     |
+| 1.4.0          | 1.6.3          | Tested ✅     |
 
 ### Supported Platforms
 

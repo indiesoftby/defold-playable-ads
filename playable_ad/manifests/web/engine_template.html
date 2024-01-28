@@ -235,9 +235,8 @@
     <script id="engine-loader" src="dmloader.js" embed="compress"></script>
     <script data-src="{{exe-name}}_archive.js" embed></script>
     <script id="engine-setup" type="text/javascript">
-      // The playable ad verification system of ad platforms require
-      // the target URL to be exposed directly in the JS code.
-      // That's we have to place `mraid.open()` and `FbPlayableAd.onCTAClick()` in this function.
+      // The playable ad verification system of ad platforms requires the target URL to be exposed directly in the JS code.
+      // So we have to place `mraid.open()` and `FbPlayableAd.onCTAClick()` in this function.
       function doClick() {
         if (window.FbPlayableAd) {
           // If the advert is running on Facebook, we have to call this function on click:

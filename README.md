@@ -4,12 +4,14 @@
 
 Develop and build playable ads with the Defold game engine!
 
-This repository contains a script for the [Gulp](https://gulpjs.com/) build system, which:
+This repository contains an easy-to-use script for the [Gulp](https://gulpjs.com/) build system, which:
 1. Downloads [bob.jar](https://d.defold.com/stable/).
 2. Builds the project for the HTML5 platform using `bob.jar`.
 3. Combines all resources into **a single HTML file**. The binary of the Defold engine is compressed using Zstd and encoded with Base64.
 
-[**Open the build result**](https://indiesoftby.github.io/defold-playable-ads/) online. 
+☝ All you need is to be a little familiar with the command line. The script will do the rest on its own.
+
+**Open the build result - [`https://indiesoftby.github.io/defold-playable-ads/index.html`](https://indiesoftby.github.io/defold-playable-ads/index.html)**. Also, you can put the link to it in the [Ad Tester tool](https://play.google.com/store/apps/details?id=com.unity3d.auicreativetestapp&hl=en&gl=US) to check that it's a valid playable ad.
 
 Please note that the example build doesn't use any external resources as required. The total size is less than 1 megabyte! In this example, BasisU Decoder, Physics, Live Update are disabled in the engine.
 
@@ -38,6 +40,26 @@ Accepted sizes for HTML5 playable ad vary between ad networks:
 2. [Google](https://support.google.com/google-ads/answer/9981650?hl=en) requires a .ZIP file with a maximum size of 5MB and no more than 512 files within the .ZIP. Plus .ZIP files can contain the following formats: HTML, CSS, JS, GIF, PNG, JPG, JPEG, SVG.
 3. [AppLovin](https://p.applov.in/playablePreview?create=1&qr=1), and [Unity Ads](https://docs.unity.com/acquire/en-us/manual/playable-ads-specifications) require a single HTML file. The maximum ad size is 5MB.
 
+## Playable Ad Development Steps With Defold
+
+1. Create a new project, develop some simple game mechanics for your ad. Or use a part of your project that you will advertise.
+2. Optimise your project according to the steps in the `How To Shrink Your Game Size` section below.
+3. Follow the simple steps in the `Usage` section.
+
+> [!IMPORTANT]
+> If your ad is for Unity Ads, change the links to App Store and Google Play in the `playable_ad/manifests/web/engine_template.html` file at the very bottom in the `doClick()` function. This should be done directly in this file, as a playable ad testing tools of the ad platforms usually require these links to be directly in the html file.
+
+## How To Shrink Your Game Size
+
+Follow these tips to decrease the resulting size of the HTML file significantly:
+
+1. Customize `.appmanifest` to keep only the necessary parts of the engine.
+2. Keep only the core mechanic of your game and all assets that it requires. Remove everything else!
+3. Install the latest version of the [Zstd executable](https://github.com/facebook/zstd/releases) (i.e. Zstd 1.5.0 has better compression than Zstd 1.4.x).
+
+> [!IMPORTANT]
+> And, the last tip and the most important: set [HTML5 heap size](https://defold.com/manuals/project-settings/#heap-size) as small as possible (**minimum is 32MB**, default is 256MB) to allow your game to run on low-end Android devices.
+
 ## Required Prerequisites
 
 You will need the following apps installed on your environment:
@@ -46,10 +68,11 @@ You will need the following apps installed on your environment:
 - Zstd 1.4 or newer.
 - Gulp CLI.
 
-### Windows
+<details>
+  <summary>Windows</summary>
 
 1. Download and install [Java 17](https://adoptium.net/).
-2. Download and unpack [Zstd for Windows 64-bit](https://github.com/facebook/zstd/releases/download/v1.5.5/zstd-v1.5.5-win64.zip). Add the path to the `zstd.exe` executable to the PATH environment variable.
+2. Download and unpack [Zstd for Windows 64-bit](https://github.com/facebook/zstd/releases/download/v1.5.5/zstd-v1.5.5-win64.zip). Add the path to the `zstd.exe` executable to the PATH environment variable. Also, you can just put `zstd.exe` in the `playable_ad` folder - the script will use it from here.
 3. Download [Node.js Windows Installer (.msi) for 64-bit](https://nodejs.org/en/download/) and install it.
 4. Open `cmd.exe` and run to install Gulp CLI:
 
@@ -60,7 +83,10 @@ npm install --global gulp-cli
 > [!NOTE]
 > We recommend using Windows Terminal to see the coloured log. If you use PowerShell to run your scripts, run `gulp --no-color` to avoid the problem when the text colour matches the background colour.
 
-### Ubuntu/Debian or [Windows Subsystem for Linux (WSL)](https://docs.microsoft.com/en-us/windows/wsl/about)
+</details>
+
+<details>
+  <summary>Ubuntu/Debian or Windows Subsystem for Linux (WSL)</summary>
 
 ```
 sudo apt install --no-install-recommends openjdk-17-jre-headless nodejs npm zstd
@@ -68,7 +94,10 @@ sudo apt install --no-install-recommends openjdk-17-jre-headless nodejs npm zstd
 npm install --global gulp-cli
 ```
 
-### macOS
+</details>
+
+<details>
+  <summary>macOS</summary>
 
 Install [brew](https://brew.sh/) and paste that in a macOS Terminal prompt:
 
@@ -79,8 +108,10 @@ brew install zstd@1.5.5
 
 npm install --global gulp-cli
 ```
+</details>
 
-## Installation & Usage
+
+## Usage
 
 Copy the `playable_ad` folder into the root of your project + the `.defignore` file. Then, in the command line:
 
@@ -91,7 +122,9 @@ npm install
 gulp
 ```
 
-`npm install` installs required NodeJS packages. `gulp` builds the project into a single HTML file.
+`npm install` installs required NodeJS packages (run it only once!). 
+
+`gulp` builds the project into a single HTML file.
 
 The resulting HTML file is located at `/playable_ad/build/output_js-web/YOUR_PROJECT_TITLE/YOUR_PROJECT_TITLE.html`.
 
@@ -114,17 +147,6 @@ i.e. run `gulp --embed-archive-js=false` to build a playable ad with the two fil
 
 * `/playable_ad/build/output_js-web/YOUR_PROJECT_TITLE/YOUR_PROJECT_TITLE.html`
 * `/playable_ad/build/output_js-web/YOUR_PROJECT_TITLE/YOUR_PROJECT_TITLE_archive.js`
-
-### How To Shrink Your Game Size
-
-Follow these steps to decrease the resulting size of the HTML file significantly:
-
-1. Customize `.appmanifest` to keep only the necessary parts of the engine.
-2. Keep only the core mechanic of your game and all assets that it requires. Remove everything else!
-3. Install the latest version of the [Zstd executable](https://github.com/facebook/zstd/releases) (i.e. Zstd 1.5.0 has better compression than Zstd 1.4.x).
-
-> [!IMPORTANT]
-> And, the last tip and the most important: set [HTML5 heap size](https://defold.com/manuals/project-settings/#heap-size) as small as possible (**minimum is 32MB**, default is 256MB) to allow your game to run on low-end Android devices.
 
 ## License
 

@@ -1,2 +1,4 @@
 /playable_ad/build
 /playable_ad/node_modules
+/playable_ad/package.json
+/playable_ad/package-lock.json

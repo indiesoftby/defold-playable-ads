@@ -113,7 +113,7 @@ npm install --global gulp-cli
 
 ## Usage
 
-Copy the `playable_ad` folder into the root of your project + the `.defignore` file. Then, in the command line:
+Copy the `playable_ad` folder into the root of your project and the `.defignore` file. Then, in the command line:
 
 ```
 cd your_project_folder

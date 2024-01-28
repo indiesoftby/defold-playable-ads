@@ -1,5 +1,6 @@
 <html>
   <head>
+    {{#playable_ad.enabled}}
     <script data-src="fzstd.js" embed></script>
     <script>
       // Base64 decoder. RFC 4648, but it doesn't support ending "=" (it is stripped by the gulp script)
@@ -229,8 +230,10 @@
         }
       };
     </script>
+    {{/playable_ad.enabled}}
   </head>
   <body>
+    {{#playable_ad.enabled}}
     <div id="running-from-file-warning" merge="keep"></div>
     <script id="engine-loader" src="dmloader.js" embed="compress"></script>
     <script data-src="{{exe-name}}_archive.js" embed></script>
@@ -264,67 +267,57 @@
       // The main point is that mraid is injected by their webview and we can just use the `mraid.*` methods.
       // If `mraid` is available, then it's Unity Ads or other mraid-based ad system.
       if (window.mraid) {
-        // Defold does not currently have a public API to hook the game startup.
-        // Therefore, we override this function to figure that:
-        const old_preloadAndCallMain = Module._preloadAndCallMain;
-        Module._preloadAndCallMain = function () {
-          if (!Module._archiveLoaded) {
-            old_preloadAndCallMain();
-            return;
-          }
+        (function() {
+          // Defold does not currently have a public API to hook the game startup.
+          // Therefore, we override this function to figure that:
+          var old_preloadAndCallMain = Module._preloadAndCallMain;
+          Module._preloadAndCallMain = function () {
+            if (!Module._archiveLoaded) {
+              old_preloadAndCallMain();
+              return;
+            }
 
-          // Wait for the SDK to become ready
-          if (mraid.getState() === "loading") {
-            mraid.addEventListener("ready", onSdkReady);
-          } else {
-            onSdkReady();
-          }
-        };
+            // Wait for the SDK to become ready
+            if (mraid.getState() === "loading") {
+              mraid.addEventListener("ready", onSdkReady);
+            } else {
+              onSdkReady();
+            }
+          };
 
-        let started = false;
-        let paused = false;
-        function startGame() {
-          console.log("mraid support: start game.");
-          if (!started) {
-            started = true;
-            old_preloadAndCallMain();
-          } else {
-            if (paused) {
-              paused = false;
-              GLFW.onFocusChanged(1);
+          var started = false;
+          function startGame() {
+            if (!started) {
+              started = true;
+              console.log("mraid support: start game.");
+              old_preloadAndCallMain();
             }
           }
-        }
 
-        function pauseGame() {
-          console.log("mraid support: pause game.");
-          if (!paused) {
-            paused = true;
-            GLFW.onFocusChanged(0);
+          function viewableChangeHandler(viewable) {
+            if (viewable) {
+              startGame();
+            }
+
+            if (typeof DefMraid !== 'undefined') {
+              DefMraid.onViewableChange(viewable);
+            }
           }
-        }
 
-        function viewableChangeHandler(viewable) {
-          // start/pause/resume gameplay, stop/play sounds
-          if(viewable) {
-            startGame();
-          } else {
-            pauseGame();
+          function onSdkReady() {
+            console.log("mraid support: SDK is ready.");
+            mraid.addEventListener("viewableChange", viewableChangeHandler);
+
+            // Wait for the ad to become viewable for the first time
+            if (mraid.isViewable()) {
+              startGame();
+            }
           }
-        }
 
-        function onSdkReady() {
-          console.log("mraid support: SDK is ready.");
-          mraid.addEventListener("viewableChange", viewableChangeHandler);
-
-          // Wait for the ad to become viewable for the first time
-          if (mraid.isViewable()) {
-            startGame();
-          }
-        }
-
-        console.log("mraid support: hook installed.");
+          console.log("mraid support: hook installed.");
+        })();
       }
     </script>
+    {{/playable_ad.enabled}}
   </body>
 </html>

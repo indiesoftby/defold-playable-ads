@@ -16,18 +16,10 @@ local function toggle_music(self, enabled)
 	end
 end
 
-local function window_callback(self, event, data)
-	if event == window.WINDOW_EVENT_FOCUS_LOST then
-		print("window.WINDOW_EVENT_FOCUS_LOST")
-		toggle_music(self, false)
-	elseif event == window.WINDOW_EVENT_FOCUS_GAINED then
-		print("window.WINDOW_EVENT_FOCUS_GAINED")
-		toggle_music(self, true)
-	elseif event == window.WINDOW_EVENT_ICONIFIED then
-		print("window.WINDOW_EVENT_ICONIFIED")
-	elseif event == window.WINDOW_EVENT_DEICONIFIED then
-		print("window.WINDOW_EVENT_DEICONIFIED")
-	elseif event == window.WINDOW_EVENT_RESIZED then
+local function mraid_callback(self, event, data)
+	if event == mraid.EVENT_VIEWABLE_CHANGE then
+		print("mraid.EVENT_VIEWABLE_CHANGE:", data.viewable)
+		toggle_music(self, data.viewable)
 	end
 end
 
@@ -36,7 +28,10 @@ end
 --
 
 function init(self)
-	window.set_listener(window_callback)
+	-- If `mraid` is available, the game is ran in the webview of Unity Ads or other mraid-based ad system.
+	if mraid then
+		mraid.set_listener(mraid_callback)
+	end
 
 	toggle_music(self, true)
 	go.set("/music", "euler.z", 20)

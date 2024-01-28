@@ -10,6 +10,7 @@ const projectDir = "..";
 const buildDir = "build";
 const archiveDir = "archive";
 const bundleJsWebPath = buildDir + "/output_js-web";
+const buildSettingsPath = "build.settings";
 
 const bobJarVersionInfoUrl = "https://d.defold.com/stable/info.json";
 let bobJarVersionInfo = null; // filled by fetchBobVersionInfo()
@@ -240,8 +241,9 @@ function buildGame(cb) {
       "--build-server", options["build-server"],
       "--variant", options.variant,
       "--texture-compression", options["texture-compression"],
+      "--settings", playableAdDir + "/" + buildSettingsPath,
     ],
-    (options.settings ? ["--settings", options.settings] : []),
+    (options.settings ? [options.settings] : []),
     [
       "--bundle-output", playableAdDir + "/" + bundleJsWebPath,
       "--platform", "js-web",

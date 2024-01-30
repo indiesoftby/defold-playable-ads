@@ -1,0 +1,18 @@
+- name: mraid
+  type: table
+  members:
+
+  - name: set_listener
+    type: function
+    parameters:
+    - name: callback
+      type: function
+
+  - name: is_viewable
+    type: function
+    returns:
+    - name: result
+      type: boolean
+
+  - name: EVENT_VIEWABLE_CHANGE
+    type: string

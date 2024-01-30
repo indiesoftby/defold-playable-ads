@@ -12,6 +12,7 @@
     type: function
     returns:
     - name: result
+      desc: true - container is on-screen and viewable by the user; false - container is offscreen and not viewable.
       type: boolean
 
   - name: EVENT_VIEWABLE_CHANGE

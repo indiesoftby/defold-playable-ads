@@ -7,6 +7,7 @@
 
 typedef void (*DefMraid_OnViewableChange)(const int viewable);
 extern "C" void DefMraid_SetCallback(DefMraid_OnViewableChange callback);
+extern "C" bool DefMraid_IsViewable();
 
 static dmScript::LuaCallbackInfo* m_ListenerCallback = 0;
 
@@ -100,9 +101,17 @@ static int Mraid_SetListener(lua_State* L)
     return 0;
 }
 
+static int Mraid_IsViewable(lua_State* L)
+{
+    DM_LUA_STACK_CHECK(L, 1);
+    lua_pushboolean(L, DefMraid_IsViewable());
+    return 1;
+}
+
 // Functions exposed to Lua
 static const luaL_reg Mraid_methods[] = {
     { "set_listener", Mraid_SetListener },
+    { "is_viewable", Mraid_IsViewable },
     /* Sentinel: */
     { NULL, NULL }
 };

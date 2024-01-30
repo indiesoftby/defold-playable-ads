@@ -13,6 +13,10 @@ var LibraryDefMraid = {
     DefMraid.viewableChangeFunc = cbfun;
     return 1;
   },
+
+  DefMraid_IsViewable: function () {
+    return mraid.isViewable();
+  },
 };
 
 autoAddDeps(LibraryDefMraid, '$DefMraid');

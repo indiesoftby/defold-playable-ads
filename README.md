@@ -46,8 +46,11 @@ Accepted sizes for HTML5 playable ad vary between ad networks:
 2. Optimise your project according to the steps in the `How To Shrink Your Game Size` section below.
 3. Follow the simple steps in the `Usage` section.
 
-> [!IMPORTANT]
+> [!NOTE]
 > If your ad is for Unity Ads, change the links to App Store and Google Play in the `playable_ad/manifests/web/engine_template.html` file at the very bottom in the `doClick()` function. This should be done directly in this file, as a playable ad testing tools of the ad platforms usually require these links to be directly in the html file.
+
+> [!TIP]
+> 99% of playable ad build time with the script presented here takes a build on the remote Defold extender server. And usually it is about 1-2 minutes! So we advise you to develop your ad as a normal game and be pleased with super fast desktop builds. And only when you are ready to upload the playable ad to the ad system, then run the playable ad build script.
 
 ## How To Shrink Your Game Size
 

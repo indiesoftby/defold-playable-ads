@@ -238,10 +238,15 @@
     <script id="engine-loader" src="dmloader.js" embed="compress"></script>
     <script data-src="{{exe-name}}_archive.js" embed></script>
     <script id="engine-setup" type="text/javascript">
+      // TEMPORARY WORKAROUND FOR THE DEFOLD ISSUE 8479
+      navigator.getGamepads = null;
+      navigator.webkitGetGamepads = null;
+      //
+
       // The playable ad verification system of ad platforms requires the target URL to be exposed directly in the JS code.
       // So we have to place `mraid.open()` and `FbPlayableAd.onCTAClick()` in this function.
       function doClick() {
-        if (window.FbPlayableAd) {
+        if (typeof FbPlayableAd !== "undefined") {
           // If the advert is running on Facebook, we have to call this function on click:
           FbPlayableAd.onCTAClick();
         } else if (window.mraid) {
@@ -299,7 +304,7 @@
               startGame();
             }
 
-            if (typeof DefMraid !== 'undefined') {
+            if (typeof DefMraid !== "undefined") {
               DefMraid.onViewableChange(viewable);
             }
           }

@@ -31,8 +31,10 @@ function init(self)
 	-- If `mraid` is available, the game is ran in the webview of Unity Ads or other mraid-based ad system.
 	if mraid then
 		mraid.set_listener(mraid_callback)
+		toggle_music(self, mraid.is_viewable())
+	else
+		toggle_music(self, true)
 	end
-	toggle_music(self, mraid and mraid.is_viewable() or true)
 
 	go.set("/music", "euler.z", 20)
 	go.animate("/music", "euler.z", go.PLAYBACK_LOOP_PINGPONG, -20, go.EASING_INCUBIC, 0.7)

@@ -28,7 +28,7 @@ const chalk = require("chalk");
 const download = require("gulp-download-stream");
 const fancyLog = require("fancy-log");
 const fs = require("fs");
-const htmlmin = require("gulp-htmlmin");
+const htmlmin = require('gulp-html-minifier-terser');
 const https = require("https");
 const ini = require("ini");
 const matchAll = require("string.prototype.matchall");
@@ -463,7 +463,11 @@ function bundlePlayableAds() {
         preserveLineBreaks: true,
         removeComments: true,
         minifyCSS: true,
-        minifyJS: true,
+        minifyJS: {
+          compress: {
+            sequences: false
+          }
+        },
       })
     )
     .pipe(printSize(" resulting", 2 * 1024 * 1024))

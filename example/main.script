@@ -32,8 +32,8 @@ function init(self)
 	if mraid then
 		mraid.set_listener(mraid_callback)
 	end
+	toggle_music(self, mraid and mraid.is_viewable() or true)
 
-	toggle_music(self, true)
 	go.set("/music", "euler.z", 20)
 	go.animate("/music", "euler.z", go.PLAYBACK_LOOP_PINGPONG, -20, go.EASING_INCUBIC, 0.7)
 	go.animate("/music", "scale", go.PLAYBACK_LOOP_PINGPONG, 1.2, go.EASING_INCUBIC, 0.7)

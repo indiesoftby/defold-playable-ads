@@ -44,7 +44,23 @@ Accepted sizes for HTML5 playable ad vary between ad networks:
 
 1. Create a new project, develop some simple game mechanics for your ad. Or use a part of your project that you will advertise.
 2. Optimise your project according to the steps in the `How To Shrink Your Game Size` section below.
-3. Follow the simple steps in the `Usage` section.
+3. Follow the simple steps in the `Usage` section and add the following code to your game to handle the call to action:
+
+```lua
+local function call_to_action()
+    if html5 then
+        html5.run([[
+            try {
+                // <!> The function is located in the `playable_ad/manifests/web/engine_template.html` file.
+                // <!> The function exists only when you build your project using `gulp`.
+                doClick();
+            } catch (e) {
+                console.warn(e);
+            }
+        ]])
+    end
+end
+```
 
 > [!NOTE]
 > If your ad is for Unity Ads, change the links to App Store and Google Play in the `playable_ad/manifests/web/engine_template.html` file at the very bottom in the `doClick()` function. This should be done directly in this file, as a playable ad testing tools of the ad platforms usually require these links to be directly in the html file.

@@ -151,6 +151,7 @@
       var ArchiveJsRequest = function () {
         this.responseType = "text";
       };
+      ArchiveJsRequest.DONE = 4;
       ArchiveJsRequest.prototype.open = function (method, url) {
         this.url = url;
       };
@@ -171,7 +172,7 @@
             self.onerror();
           } else {
             var data = ARCHIVEJS_DATA[self.url];
-            self.readyState = 4;
+            self.readyState = 4; // = ArchiveJsRequest.DONE
             self.status = 200;
 
             time1 = new Date().getTime();
@@ -234,15 +235,12 @@
   </head>
   <body>
     {{#playable_ad.enabled}}
-    <div id="running-from-file-warning" merge="keep"></div>
+    <div id="app-container"> 
+      <div id="running-from-file-warning" merge="keep"></div>
+    </div>
     <script id="engine-loader" src="dmloader.js" embed="compress"></script>
     <script data-src="{{exe-name}}_archive.js" embed></script>
-    <script id="engine-setup" type="text/javascript">
-      // TEMPORARY WORKAROUND FOR THE DEFOLD ISSUE 8479
-      navigator.getGamepads = null;
-      navigator.webkitGetGamepads = null;
-      //
-
+    <script id="engine-start" type="text/javascript">
       // The playable ad verification system of ad platforms requires the target URL to be exposed directly in the JS code.
       // So we have to place `mraid.open()` and `FbPlayableAd.onCTAClick()` in this function.
       function doClick() {
@@ -275,10 +273,10 @@
         (function() {
           // Defold does not currently have a public API to hook the game startup.
           // Therefore, we override this function to figure that:
-          var old_preloadAndCallMain = Module._preloadAndCallMain;
-          Module._preloadAndCallMain = function () {
+          var old_callMain = Module._callMain;
+          Module._callMain = function () {
             if (!Module._archiveLoaded) {
-              old_preloadAndCallMain();
+              old_callMain();
               return;
             }
 
@@ -295,7 +293,7 @@
             if (!started) {
               started = true;
               console.log("mraid support: start game.");
-              old_preloadAndCallMain();
+              old_callMain();
             }
           }
 

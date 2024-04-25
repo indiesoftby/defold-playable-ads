@@ -1,6 +1,6 @@
 {
   "name": "defold-playable-ads",
-  "version": "1.4.0",
+  "version": "1.5.0",
   "main": "gulpfile.js",
   "author": "Artsiom Trubchyk <aglitchman@gmail.com>",
   "license": "MIT",

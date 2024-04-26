@@ -46,7 +46,7 @@ const Vinyl = require("vinyl");
 
 const knownOptions = {
   boolean: ["embed-archive-js"],
-  string: ["architectures", "build-server", "settings", "variant", "texture-compression"],
+  string: ["architectures", "build-server", "settings", "variant", "texture-compression", "engine-sha1"],
   default: {
     architectures: "wasm-web",
     "embed-archive-js": true,
@@ -176,7 +176,8 @@ function javaIsInstalled(cb) {
 }
 
 function fetchBobVersionInfo(cb) {
-  https
+  if (options["engine-sha1"] == undefined) {
+    https
     .get(bobJarVersionInfoUrl, function (res) {
       res.setEncoding("utf8");
 
@@ -197,6 +198,12 @@ function fetchBobVersionInfo(cb) {
     .on("error", function (e) {
       cb(e);
     });
+  } else {
+    bobJarVersionInfo = {
+      sha1: options["engine-sha1"]
+    }
+    cb();
+  }
 }
 
 function downloadBobJar(cb) {

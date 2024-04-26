@@ -154,6 +154,7 @@ You can pass the following arguments from the command line to the script:
 ```bash
 --architectures <arg>           Comma separated list of architectures to include: js-web,wasm-web (default = wasm-web).
 --embed-archive-js <arg>        Embed `_archive.js` file: true/false (default = true).
+--engine-sha1 <arg>             Set sha1 of a specific version of the engine to be used (stable version by default)
 
 # The following arguments passed to Bob.jar as is:
 --build-server <arg>            The build server (default = https://build.defold.com).

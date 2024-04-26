@@ -178,26 +178,26 @@ function javaIsInstalled(cb) {
 function fetchBobVersionInfo(cb) {
   if (options["engine-sha1"] == undefined) {
     https
-    .get(bobJarVersionInfoUrl, function (res) {
-      res.setEncoding("utf8");
+      .get(bobJarVersionInfoUrl, function (res) {
+        res.setEncoding("utf8");
 
-      let body = "";
-      res.on("data", function (data) {
-        body += data;
+        let body = "";
+        res.on("data", function (data) {
+          body += data;
+        });
+        res.on("end", function () {
+          bobJarVersionInfo = JSON.parse(body);
+
+          if (!/^[a-f0-9]{40}$/i.test(bobJarVersionInfo.sha1)) {
+            throw "Invalid bob.jar SHA-1.";
+          }
+
+          cb();
+        });
+      })
+      .on("error", function (e) {
+        cb(e);
       });
-      res.on("end", function () {
-        bobJarVersionInfo = JSON.parse(body);
-
-        if (!/^[a-f0-9]{40}$/i.test(bobJarVersionInfo.sha1)) {
-          throw "Invalid bob.jar SHA-1.";
-        }
-
-        cb();
-      });
-    })
-    .on("error", function (e) {
-      cb(e);
-    });
   } else {
     bobJarVersionInfo = {
       sha1: options["engine-sha1"]

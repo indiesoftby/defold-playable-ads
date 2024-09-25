@@ -250,7 +250,7 @@ function buildGame(cb) {
       "--texture-compression", options["texture-compression"],
       "--settings", playableAdDir + "/" + buildSettingsPath,
     ],
-    (options.settings ? [options.settings] : []),
+    (options.settings ? ["--settings", options.settings] : []),
     [
       "--bundle-output", playableAdDir + "/" + bundleJsWebPath,
       "--platform", "js-web",

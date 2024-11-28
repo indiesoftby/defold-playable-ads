@@ -1,43 +1,53 @@
 [project]
-title = playable_ad_example
-version = 1.5.0
+# Basic project settings
+title = playable_ad_example  # Title of the project
+version = 1.5.0              # Version of the project
 
 [bootstrap]
-main_collection = /example/main.collectionc
+# Initial settings to define the starting collection
+main_collection = /example/main.collectionc  # Entry point of the game
 
 [input]
-game_binding = /builtins/input/all.input_bindingc
-use_accelerometer = 0
+# Input settings for the game
+game_binding = /builtins/input/all.input_bindingc  # Input binding file
+use_accelerometer = 0                             # Disable accelerometer input (0 = off, 1 = on)
 
 [display]
-width = 640
-height = 1136
-high_dpi = 1
+# Display settings for the game window
+width = 640              # Width of the display in pixels
+height = 1136            # Height of the display in pixels
+high_dpi = 1             # Enable high DPI mode (1 = on, 0 = off)
 
 [ios]
-bundle_identifier = com.example.todo
+# iOS-specific settings
+bundle_identifier = com.example.todo  # iOS app bundle identifier
 
 [osx]
-bundle_identifier = com.example.todo
+# macOS-specific settings
+bundle_identifier = com.example.todo  # macOS app bundle identifier
 
 [android]
-input_method = HiddenInputField
+# Android-specific settings
+input_method = HiddenInputField  # Set input method to hidden input field
 
 [script]
-shared_state = 1
+# Script-related settings
+shared_state = 1  # Enable shared state for Lua scripts (1 = on, 0 = off)
 
 [html5]
-engine_arguments = --verify-graphics-calls=false
-show_made_with_defold = 0
-show_fullscreen_button = 0
-scale_mode = stretch
-cssfile = /builtins/manifests/web/dark_theme.css
-heap_size = 64
-splash_image = /example/web/splash.png
+# HTML5-specific settings for web builds
+engine_arguments = --verify-graphics-calls=false  # Disable OpenGL error checking
+show_made_with_defold = 0                         # Disable "Made with Defold" splash (0 = off, 1 = on)
+show_fullscreen_button = 0                        # Disable fullscreen button on web builds (0 = off, 1 = on)
+scale_mode = stretch                              # Set scaling mode to stretch
+cssfile = /builtins/manifests/web/dark_theme.css  # Path to the custom CSS file for web builds
+heap_size = 64                                    # Set heap size in megabytes for the HTML5 build
+splash_image = /example/web/splash.png            # Path to the splash image for web builds
 
 [graphics]
-texture_profiles = /example/profiles/no_mipmaps.texture_profiles
+# Graphics-related settings
+texture_profiles = /example/profiles/no_mipmaps.texture_profiles  # Path to texture profile settings
 
 [native_extension]
-app_manifest = /example/no_basis_liveupdate_physics.appmanifest
-
+# Native extension settings
+app_manifest = /example/no_basis_liveupdate_physics.appmanifest  # Path to app manifest for live update and physics settings

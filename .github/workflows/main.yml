@@ -41,11 +41,16 @@ jobs:
           gulp
 
           mkdir public
-          mv build/output_js-web/playable_ad_example/playable_ad_example.html public/index.html
+          cp build/output_js-web/playable_ad_example/playable_ad_example.html public/index.html
 
       - name: Deploy to Pages 🚀
         if: github.ref == 'refs/heads/master'
-        uses: JamesIves/github-pages-deploy-action@4.1.4
+        uses: JamesIves/github-pages-deploy-action@4
         with:
           branch: gh-pages
           folder: playable_ad/public
+
+      - name: Upload Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          path: build/output_js-web/playable_ad_example

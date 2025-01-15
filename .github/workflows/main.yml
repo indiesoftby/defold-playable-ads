@@ -6,25 +6,24 @@ on:
     branches:
       - '*'
   pull_request:
-    types: [opened, reopened]
 
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout 🛎️
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
 
       - name: Install Java ♨️
-        uses: actions/setup-java@v2
+        uses: actions/setup-java@v4
         with:
           distribution: "temurin"
-          java-version: "17"
+          java-version: "21"
 
       - name: Install Node
-        uses: actions/setup-node@v2
+        uses: actions/setup-node@v4
         with:
-          node-version: '18'
+          node-version: "21"
 
       - name: Install Zstd
         run: |
@@ -41,11 +40,16 @@ jobs:
           gulp
 
           mkdir public
-          mv build/output_js-web/playable_ad_example/playable_ad_example.html public/index.html
+          cp build/output_js-web/playable_ad_example/playable_ad_example.html public/index.html
 
       - name: Deploy to Pages 🚀
         if: github.ref == 'refs/heads/master'
-        uses: JamesIves/github-pages-deploy-action@4.1.4
+        uses: JamesIves/github-pages-deploy-action@v4
         with:
           branch: gh-pages
           folder: playable_ad/public
+
+      - name: Upload Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          path: playable_ad/build/output_js-web/playable_ad_example/

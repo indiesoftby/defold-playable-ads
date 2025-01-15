@@ -6,7 +6,6 @@ on:
     branches:
       - '*'
   pull_request:
-    types: [opened, reopened]
 
 jobs:
   build-and-deploy:
@@ -45,7 +44,7 @@ jobs:
 
       - name: Deploy to Pages 🚀
         if: github.ref == 'refs/heads/master'
-        uses: JamesIves/github-pages-deploy-action@4
+        uses: JamesIves/github-pages-deploy-action@v4
         with:
           branch: gh-pages
           folder: playable_ad/public

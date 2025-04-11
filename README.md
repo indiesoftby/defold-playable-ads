@@ -21,7 +21,7 @@ Feel free to ask questions: [the topic about this asset is on the Defold forum](
 
 | Tool Version   | Defold Version | Status        |
 | -------------- | -------------- | ------------- |
-| 1.5.0          | 1.8.0          | Tested ✅     |
+| 1.5.0          | 1.9.8          | Tested ✅     |
 
 ### Supported Platforms
 
@@ -82,15 +82,15 @@ Follow these tips to decrease the resulting size of the HTML file significantly:
 ## Required Prerequisites
 
 You will need the following apps installed on your environment:
-- Node.js 12 or newer.
-- Java 17 (Defold >=1.4.8).
-- Zstd 1.4 or newer.
+- Node.js 18 or newer.
+- Java 21 (Defold >=1.9.8).
+- Zstd 1.5 or newer.
 - Gulp CLI.
 
 <details>
   <summary>Windows</summary>
 
-1. Download and install [Java 17](https://adoptium.net/).
+1. Download and install [Java 21](https://adoptium.net/).
 2. Download and unpack [Zstd for Windows 64-bit](https://github.com/facebook/zstd/releases/download/v1.5.5/zstd-v1.5.5-win64.zip). Add the path to the `zstd.exe` executable to the PATH environment variable. Also, you can just put `zstd.exe` in the `playable_ad` folder - the script will use it from here.
 3. Download [Node.js Windows Installer (.msi) for 64-bit](https://nodejs.org/en/download/) and install it.
 4. Open `cmd.exe` and run to install Gulp CLI:
@@ -108,7 +108,7 @@ npm install --global gulp-cli
   <summary>Ubuntu/Debian or Windows Subsystem for Linux (WSL)</summary>
 
 ```
-sudo apt install --no-install-recommends openjdk-17-jre-headless nodejs npm zstd
+sudo apt install --no-install-recommends openjdk-21-jre-headless nodejs npm zstd
 
 npm install --global gulp-cli
 ```
@@ -122,7 +122,7 @@ Install [brew](https://brew.sh/) and paste that in a macOS Terminal prompt:
 
 ```
 brew install node@18
-brew install openjdk@17
+brew install openjdk@21
 brew install zstd@1.5.5
 
 npm install --global gulp-cli

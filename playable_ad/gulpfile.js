@@ -25,7 +25,8 @@ let bobJarPath = bobJarDir + "/" + bobJarFilename; // updated by downloadBobJar(
 
 const { series, src, dest } = require("gulp");
 const chalk = require("chalk");
-const download = require("gulp-download-stream");
+const { Readable } = require("stream");
+const got = require("got");
 const fancyLog = require("fancy-log");
 const fs = require("fs");
 const htmlmin = require('gulp-html-minifier-terser');
@@ -212,15 +213,35 @@ function downloadBobJar(cb) {
   bobJarPath = bobJarDir + "/" + bobJarFilename;
 
   if (fs.existsSync(bobJarPath)) {
-    cb();
-  } else {
-    return download([
-      {
-        file: bobJarFilename,
-        url: bobJarDownloadUrl,
-      },
-    ]).pipe(dest(bobJarDir));
+    return cb();
   }
+
+  const stream = new Readable({ objectMode: true, read() {} });
+  
+  got(bobJarDownloadUrl, {
+    responseType: 'buffer',
+    timeout: 30000
+  })
+    .then(response => {
+      const file = new Vinyl({
+        path: bobJarFilename,
+        contents: response.body,
+        stat: {
+          size: response.body.length
+        }
+      });
+      
+      stream.push(file);
+      stream.push(null);
+    })
+    .catch(err => {
+      stream.emit('error', err);
+    });
+
+  return stream
+    .pipe(dest(bobJarDir))
+    .on('finish', cb)
+    .on('error', cb);
 }
 
 function checkBobJar(cb) {

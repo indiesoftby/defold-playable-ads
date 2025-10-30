@@ -21,7 +21,7 @@ Feel free to ask questions: [the topic about this asset is on the Defold forum](
 
 | Tool Version   | Defold Version | Status        |
 | -------------- | -------------- | ------------- |
-| 1.5.3          | 1.10.3         | Tested ✅     |
+| 1.5.3          | 1.11.1         | Tested ✅     |
 
 ### Supported Platforms
 
@@ -29,7 +29,8 @@ Feel free to ask questions: [the topic about this asset is on the Defold forum](
 | ---------| -------|
 | [Facebook](https://developers.facebook.com/tools/playable-preview/) | Supported ✅ |
 | [Unity Ads](https://docs.unity.com/acquire/en-us/manual/playable-ads-specifications) | Supported ✅ |
-| AppLovin, Snapchat, etc | Not tested. Can be done on request ⏩ |
+| [AppLovin](https://p.applov.in/playablePreview?create=1) | Supported ✅ |
+| Moloco, Snapchat, etc | Not tested. Can be done on request ⏩ |
 
 ## About A Playable Ad
 
@@ -63,7 +64,7 @@ end
 ```
 
 > [!NOTE]
-> If your ad is for Unity Ads, change the links to App Store and Google Play in the `playable_ad/manifests/web/engine_template.html` file at the very bottom in the `doClick()` function. This should be done directly in this file, as a playable ad testing tools of the ad platforms usually require these links to be directly in the html file.
+> If your ad is for Unity Ads, AppLovin and other MRAID compatible ad platforms, change the links to App Store and Google Play in game.project in the Playable Ads section. The values will be injected into the final HTML since playable ad testing tools of the ad platforms usually require these links to be directly in the html file.
 
 > [!TIP]
 > 99% of playable ad build time with the script presented here takes a build on the remote Defold extender server. And usually it is about 1-2 minutes! So we advise you to develop your ad as a normal game and be pleased with super fast desktop builds. And only when you are ready to upload the playable ad to the ad system, then run the playable ad build script.
@@ -91,7 +92,7 @@ You will need the following apps installed on your environment:
   <summary>Windows</summary>
 
 1. Download and install [Java 21](https://adoptium.net/).
-2. Download and unpack [Zstd for Windows 64-bit](https://github.com/facebook/zstd/releases/download/v1.5.5/zstd-v1.5.5-win64.zip). Add the path to the `zstd.exe` executable to the PATH environment variable. Also, you can just put `zstd.exe` in the `playable_ad` folder - the script will use it from here.
+2. Download and unpack [Zstd for Windows 64-bit](https://github.com/facebook/zstd/releases/download/v1.5.7/zstd-v1.5.7-win64.zip). Add the path to the `zstd.exe` executable to the PATH environment variable. Also, you can just put `zstd.exe` in the `playable_ad` folder - the script will use it from here.
 3. Download [Node.js Windows Installer (.msi) for 64-bit](https://nodejs.org/en/download/) and install it.
 4. Open `cmd.exe` and run to install Gulp CLI:
 
@@ -123,7 +124,7 @@ Install [brew](https://brew.sh/) and paste that in a macOS Terminal prompt:
 ```
 brew install node@18
 brew install openjdk@21
-brew install zstd@1.5.5
+brew install zstd@1.5.7
 
 npm install --global gulp-cli
 ```

@@ -244,15 +244,25 @@
     <script id="engine-start" type="text/javascript">
       EngineLoader.stream_wasm = false;
 
+      function getMraidApi() {
+        // Some validators expose MRAID as a global lexical binding (`const mraid`)
+        // without also assigning it to window.mraid.
+        if (typeof mraid !== "undefined") {
+          return mraid;
+        }
+        return window.mraid || null;
+      }
+
       function isMraidAvailable() {
-        return window.mraid &&
-          typeof window.mraid.open === "function";
+        var mraidApi = getMraidApi();
+        return mraidApi && typeof mraidApi.open === "function";
       }
 
       function isMraidLifecycleAvailable() {
-        return window.mraid &&
-          typeof window.mraid.getState === "function" &&
-          typeof window.mraid.addEventListener === "function";
+        var mraidApi = getMraidApi();
+        return mraidApi &&
+          typeof mraidApi.getState === "function" &&
+          typeof mraidApi.addEventListener === "function";
       }
 
       window.PlayableData = {
@@ -304,7 +314,7 @@
             var url = /iphone|ipad|ipod|macintosh/i.test(window.navigator.userAgent.toLowerCase())
               ? window.PlayableData.URL_IOS
               : window.PlayableData.URL_ANDROID;
-            mraid.open(url);
+            getMraidApi().open(url);
           } else if (window.ExitApi && typeof window.ExitApi.exit === "function") {
             ExitApi.exit();
           } else {
@@ -338,6 +348,8 @@
       // If `mraid` is available, then it's Unity Ads or other mraid-based ad system.
       if (isMraidLifecycleAvailable()) {
         (function() {
+          var mraidApi = getMraidApi();
+
           // Defold does not currently have a public API to hook the game startup.
           // Therefore, we override this function to figure that:
           var old_callMain = Module._callMain;
@@ -348,8 +360,8 @@
             }
 
             // Wait for the SDK to become ready
-            if (mraid.getState() === "loading") {
-              mraid.addEventListener("ready", onSdkReady);
+            if (mraidApi.getState() === "loading") {
+              mraidApi.addEventListener("ready", onSdkReady);
             } else {
               onSdkReady();
             }
@@ -376,10 +388,10 @@
 
           function onSdkReady() {
             console.log("mraid support: SDK is ready.");
-            mraid.addEventListener("viewableChange", viewableChangeHandler);
+            mraidApi.addEventListener("viewableChange", viewableChangeHandler);
 
             // Wait for the ad to become viewable for the first time
-            if (typeof mraid.isViewable !== "function" || mraid.isViewable()) {
+            if (typeof mraidApi.isViewable !== "function" || mraidApi.isViewable()) {
               startGame();
             }
           }

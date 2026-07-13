@@ -246,9 +246,12 @@
 
       function isMraidAvailable() {
         return window.mraid &&
-          typeof window.mraid.open === "function" &&
+          typeof window.mraid.open === "function";
+      }
+
+      function isMraidLifecycleAvailable() {
+        return window.mraid &&
           typeof window.mraid.getState === "function" &&
-          typeof window.mraid.isViewable === "function" &&
           typeof window.mraid.addEventListener === "function";
       }
 
@@ -291,9 +294,9 @@
           // Installing before the packshot is also considered the end of the playable.
           window.Playable.gameEnd();
 
-          if (window.ExitApi) {
-            ExitApi.exit();
-          } else if (typeof FbPlayableAd !== "undefined") {
+          // Prefer APIs injected by the current ad network. exitapi.js is bundled for
+          // Google builds, but can still be reachable when previewing on another network.
+          if (typeof FbPlayableAd !== "undefined" && typeof FbPlayableAd.onCTAClick === "function") {
             FbPlayableAd.onCTAClick();
           } else if (typeof window.install === "function") {
             window.install && window.install();
@@ -302,6 +305,8 @@
               ? window.PlayableData.URL_IOS
               : window.PlayableData.URL_ANDROID;
             mraid.open(url);
+          } else if (window.ExitApi && typeof window.ExitApi.exit === "function") {
+            ExitApi.exit();
           } else {
             var fallbackUrl = /iphone|ipad|ipod|macintosh/i.test(window.navigator.userAgent.toLowerCase())
               ? window.PlayableData.URL_IOS
@@ -331,7 +336,7 @@
 
       // The main point is that mraid is injected by their webview and we can just use the `mraid.*` methods.
       // If `mraid` is available, then it's Unity Ads or other mraid-based ad system.
-      if (isMraidAvailable()) {
+      if (isMraidLifecycleAvailable()) {
         (function() {
           // Defold does not currently have a public API to hook the game startup.
           // Therefore, we override this function to figure that:
@@ -374,7 +379,7 @@
             mraid.addEventListener("viewableChange", viewableChangeHandler);
 
             // Wait for the ad to become viewable for the first time
-            if (mraid.isViewable()) {
+            if (typeof mraid.isViewable !== "function" || mraid.isViewable()) {
               startGame();
             }
           }

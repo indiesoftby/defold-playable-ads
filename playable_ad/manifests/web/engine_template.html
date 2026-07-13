@@ -242,6 +242,8 @@
     <script id="engine-loader" src="dmloader.js" embed="compress"></script>
     <script data-src="{{exe-name}}_archive.js" embed></script>
     <script id="engine-start" type="text/javascript">
+      EngineLoader.stream_wasm = false;
+
       function isMraidAvailable() {
         return window.mraid &&
           typeof window.mraid.open === "function" &&

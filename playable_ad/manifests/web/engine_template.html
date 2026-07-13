@@ -1,6 +1,7 @@
 <html>
   <head>
     {{#playable_ad.enabled}}
+    <script type="text/javascript" src="https://tpc.googlesyndication.com/pagead/gadgets/html5/api/exitapi.js"></script>
     <script data-src="fzstd.js" embed></script>
     <script>
       // Base64 decoder. RFC 4648, but it doesn't support ending "=" (it is stripped by the gulp script)
@@ -241,10 +242,11 @@
     <script id="engine-loader" src="dmloader.js" embed="compress"></script>
     <script data-src="{{exe-name}}_archive.js" embed></script>
     <script id="engine-start" type="text/javascript">
-      // The playable ad verification system of ad platforms requires the target URL to be exposed directly in the JS code.
-      // So we have to place `mraid.open()` and `FbPlayableAd.onCTAClick()` in this function.
+      // Ad platform verification requires each supported exit API to be exposed directly in the JS code.
       function doClick() {
-        if (typeof FbPlayableAd !== "undefined") {
+        if (window.ExitApi) {
+          ExitApi.exit();
+        } else if (typeof FbPlayableAd !== "undefined") {
           // If the advert is running on Facebook, we have to call this function on click:
           FbPlayableAd.onCTAClick();
         } else if (window.mraid) {

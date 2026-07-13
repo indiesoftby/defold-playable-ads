@@ -33,6 +33,16 @@ Feel free to ask questions: [the topic about this asset is on the Defold forum](
 | [AppLovin](https://p.applov.in/playablePreview?create=1) | Supported ✅ |
 | Moloco, Snapchat, etc | Not tested. Can be done on request ⏩ |
 
+### Playable Ad Testers
+
+Use these platform tools to preview and validate the generated playable ad before submission:
+
+- **Facebook:** [Playable Ads Preview](https://developers.facebook.com/tools/playable-preview/)
+- **Google:** [HTML5 Validator](https://h5validator.appspot.com/adwords/asset)
+- **Mintegral:** [Playturbo Review](https://www.playturbo.com/review)
+- **AppLovin:** [Playable Preview](https://p.applov.in/playablePreview?create=1)
+- **Unity Ads and IronSource:** [MRAID Validator](https://tools.playablemaker.com/mraid-validator)
+
 ## About A Playable Ad
 
 A [playable ad](https://learn.g2crowd.com/playable-ads) is an interactive advertisement, mostly used to promote mobile games. A playable ad acts as a demo of the game (or product), allowing users to quickly play the game directly in the ad before downloading it.

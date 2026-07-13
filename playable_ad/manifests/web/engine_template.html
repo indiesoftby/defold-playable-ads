@@ -242,6 +242,33 @@
     <script id="engine-loader" src="dmloader.js" embed="compress"></script>
     <script data-src="{{exe-name}}_archive.js" embed></script>
     <script id="engine-start" type="text/javascript">
+      // Mintegral support
+      // -----------------
+      window.Playable = {
+        gameLoaded() {
+          // Mintegral calls these global hooks when the playable starts and closes.
+          window.gameStart = function () {
+          };
+
+          window.gameClose = function () {
+          };
+
+          window.gameReady && window.gameReady();
+        },
+
+        gameEnd() {
+          window.gameEnd && window.gameEnd();
+        },
+
+        install() {
+          window.install && window.install();
+        },
+
+        retry() {
+          window.gameRetry && window.gameRetry();
+        }
+      };
+
       // Ad platform verification requires each supported exit API to be exposed directly in the JS code.
       function doClick() {
         if (window.ExitApi) {
@@ -249,6 +276,9 @@
         } else if (typeof FbPlayableAd !== "undefined") {
           // If the advert is running on Facebook, we have to call this function on click:
           FbPlayableAd.onCTAClick();
+        } else if (typeof window.install === "function") {
+          // Mintegral injects the install function and requires it to be called from the CTA.
+          window.Playable.install();
         } else if (window.mraid) {
           // If `mraid` is available, the ad is running on Unity Ads etc.
           // Let's detect the platform from User Agent
@@ -322,6 +352,20 @@
           console.log("mraid support: hook installed.");
         })();
       }
+
+      // Defold calls _callMain again after the embedded archive has loaded.
+      // Notify Mintegral at that point, once, before the game starts.
+      (function() {
+        var gameLoaded = false;
+        var old_callMain = Module._callMain;
+        Module._callMain = function () {
+          if (Module._archiveLoaded && !gameLoaded) {
+            gameLoaded = true;
+            window.Playable.gameLoaded();
+          }
+          old_callMain();
+        };
+      })();
     </script>
     {{/playable_ad.enabled}}
   </body>

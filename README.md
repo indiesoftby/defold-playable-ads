@@ -146,14 +146,14 @@ gulp
 
 `gulp` builds the project into a single HTML file.
 
-The resulting HTML file is located at `/playable_ad/build/output_js-web/YOUR_PROJECT_TITLE/YOUR_PROJECT_TITLE.html`.
+The resulting HTML file is located at `/playable_ad/build/output_wasm-web/YOUR_PROJECT_TITLE/YOUR_PROJECT_TITLE.html`.
 
 ### Command Line Arguments
 
 You can pass the following arguments from the command line to the script:
 
 ```bash
---architectures <arg>           Comma separated list of architectures to include: js-web,wasm-web (default = wasm-web).
+--architectures <arg>           Comma separated list of architectures to include: wasm-web.
 --embed-archive-js <arg>        Embed `_archive.js` file: true/false (default = true).
 --engine-sha1 <arg>             Set sha1 of a specific version of the engine to be used (stable version by default)
 
@@ -166,8 +166,8 @@ You can pass the following arguments from the command line to the script:
 
 i.e. run `gulp --embed-archive-js=false` to build a playable ad with the two files:
 
-* `/playable_ad/build/output_js-web/YOUR_PROJECT_TITLE/YOUR_PROJECT_TITLE.html`
-* `/playable_ad/build/output_js-web/YOUR_PROJECT_TITLE/YOUR_PROJECT_TITLE_archive.js`
+* `/playable_ad/build/output_wasm-web/YOUR_PROJECT_TITLE/YOUR_PROJECT_TITLE.html`
+* `/playable_ad/build/output_wasm-web/YOUR_PROJECT_TITLE/YOUR_PROJECT_TITLE_archive.js`
 
 ## License
 

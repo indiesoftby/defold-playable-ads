@@ -9,7 +9,7 @@ const playableAdDir = "playable_ad";
 const projectDir = "..";
 const buildDir = "build";
 const archiveDir = "archive";
-const bundleJsWebPath = buildDir + "/output_js-web";
+const bundleJsWebPath = buildDir + "/output_wasm-web";
 const buildSettingsPath = "build.settings";
 
 const bobJarVersionInfoUrl = "https://d.defold.com/stable/info.json";
@@ -284,7 +284,7 @@ function buildGame(cb) {
     (options.settings ? ["--settings", options.settings] : []),
     [
       "--bundle-output", playableAdDir + "/" + bundleJsWebPath,
-      "--platform", "js-web",
+      "--platform", "wasm-web",
       "--architectures", architectures.join(","),
       "--archive",
       "distclean",
@@ -360,9 +360,6 @@ function bundleArchiveJs() {
   if (architectures.includes("wasm-web")) {
     files.push(sanitisedTitle + "_wasm.js");
     files.push(sanitisedTitle + ".wasm");
-  }
-  if (architectures.includes("js-web")) {
-    files.push(sanitisedTitle + "_asmjs.js");
   }
   files.push(archiveDir + "/*");
 

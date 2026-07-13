@@ -511,7 +511,6 @@ function bundlePlayableAds() {
   const dir = bundleJsWebPath + "/" + projectTitle;
   return src(dir + "/index.html")
     .pipe(removeRunningFromFileWarning())
-    .pipe(normalizeViewport())
     .pipe(embedImages(dir))
     .pipe(embedJs(dir))
     .pipe(rename(sanitisedTitle + ".html"))
@@ -528,6 +527,7 @@ function bundlePlayableAds() {
         },
       })
     )
+    .pipe(normalizeViewport())
     .pipe(printSize(" resulting", 2 * 1024 * 1024))
     .pipe(dest(dir));
 }

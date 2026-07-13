@@ -250,10 +250,23 @@
           typeof window.mraid.addEventListener === "function";
       }
 
-      // Mintegral support
-      // -----------------
+      window.PlayableData = {
+        URL_IOS: "{{playable_ad.app_store_url}}",
+        URL_ANDROID: "{{playable_ad.google_play_url}}"
+      };
+
+      var playableLoaded = false;
+      var playableEnded = false;
+
+      // Shared playable lifecycle and platform CTA routing
+      // --------------------------------------------------
       window.Playable = {
         gameLoaded() {
+          if (playableLoaded) {
+            return;
+          }
+          playableLoaded = true;
+
           // Mintegral calls these global hooks when the playable starts and closes.
           window.gameStart = function () {
           };
@@ -265,11 +278,38 @@
         },
 
         gameEnd() {
+          if (playableEnded) {
+            return;
+          }
+          playableEnded = true;
           window.gameEnd && window.gameEnd();
         },
 
         install() {
-          window.install && window.install();
+          // Installing before the packshot is also considered the end of the playable.
+          window.Playable.gameEnd();
+
+          if (window.ExitApi) {
+            ExitApi.exit();
+          } else if (typeof FbPlayableAd !== "undefined") {
+            FbPlayableAd.onCTAClick();
+          } else if (typeof window.install === "function") {
+            window.install && window.install();
+          } else if (isMraidAvailable()) {
+            var url = /iphone|ipad|ipod|macintosh/i.test(window.navigator.userAgent.toLowerCase())
+              ? window.PlayableData.URL_IOS
+              : window.PlayableData.URL_ANDROID;
+            mraid.open(url);
+          } else {
+            var fallbackUrl = /iphone|ipad|ipod|macintosh/i.test(window.navigator.userAgent.toLowerCase())
+              ? window.PlayableData.URL_IOS
+              : window.PlayableData.URL_ANDROID;
+            if (fallbackUrl) {
+              window.open(fallbackUrl, "_blank");
+            } else {
+              console.warn("Click! But the platform is unknown and no fallback store URL is configured.");
+            }
+          }
         },
 
         retry() {
@@ -279,27 +319,7 @@
 
       // Ad platform verification requires each supported exit API to be exposed directly in the JS code.
       function doClick() {
-        if (window.ExitApi) {
-          ExitApi.exit();
-        } else if (typeof FbPlayableAd !== "undefined") {
-          // If the advert is running on Facebook, we have to call this function on click:
-          FbPlayableAd.onCTAClick();
-        } else if (typeof window.install === "function") {
-          // Mintegral injects the install function and requires it to be called from the CTA.
-          window.Playable.install();
-        } else if (isMraidAvailable()) {
-          // If `mraid` is available, the ad is running on Unity Ads etc.
-          // Select the platform-specific store URL from the user agent.
-          var userAgent = navigator.userAgent || navigator.vendor;
-          var url = "{{playable_ad.app_store_url}}";
-          var androidUrl = "{{playable_ad.google_play_url}}";
-          if (/android/i.test(userAgent)) {
-            url = androidUrl;
-          }
-          mraid.open(url);
-        } else {
-          console.warn("Click! But the platform is unknown.");
-        }
+        window.Playable.install();
       }
 
       // mraid Support

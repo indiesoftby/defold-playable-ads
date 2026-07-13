@@ -384,15 +384,17 @@ function embedImages(dir) {
     if (file.isBuffer()) {
       const input = file.contents.toString();
       let output = input;
-      let matches = matchAll(input, /(url\(")(.+?\.(png|jpg))("\))/g);
+      // Defold can emit CSS URLs with double quotes, single quotes, or no quotes.
+      // Preserve the original form while replacing the path with an embedded data URI.
+      const matches = matchAll(input, /(url\()(["']?)(.+?\.(png|jpg))\2(\))/g);
       for (const match of matches) {
         const searchMatch = match[0];
-        const filename = match[2];
+        const filename = match[3];
         const fspath = dir + "/" + filename;
 
         const imageData = fs.readFileSync(fspath);
-        const dataUriData = "data:image/" + match[3] + ";base64," + Buffer.from(imageData).toString("base64");
-        const replacement = match[1] + dataUriData + match[4];
+        const dataUriData = "data:image/" + match[4] + ";base64," + Buffer.from(imageData).toString("base64");
+        const replacement = match[1] + match[2] + dataUriData + match[2] + match[5];
         output = output.split(searchMatch).join(replacement);
 
         logFilesize(filename, " base64 encoded", replacement.length);

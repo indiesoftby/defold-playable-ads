@@ -44,6 +44,8 @@ Use these platform tools to preview and validate the generated playable ad befor
 - **AppLovin:** [Playable Preview](https://p.applov.in/playablePreview?create=1)
 - **Unity Ads and IronSource:** [MRAID Validator](https://tools.playablemaker.com/mraid-validator)
 
+Platform integration is selected at runtime by the APIs injected into the ad webview: Google `ExitApi`, Facebook `FbPlayableAd`, Mintegral `window.install`, or a complete MRAID API. The plugin does not inject a fake `mraid` object or use the user agent to select the ad network; the user agent is only used to choose the iOS or Android store URL. Luna-specific events such as `luna:build` are only relevant when a playable is exported through Unity Playworks/Luna.
+
 ## About A Playable Ad
 
 A [playable ad](https://learn.g2crowd.com/playable-ads) is an interactive advertisement, mostly used to promote mobile games. A playable ad acts as a demo of the game (or product), allowing users to quickly play the game directly in the ad before downloading it.

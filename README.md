@@ -29,6 +29,7 @@ Feel free to ask questions: [the topic about this asset is on the Defold forum](
 | ---------| -------|
 | [Google Ads](https://support.google.com/google-ads/answer/9981650?hl=en) | Supported ✅ |
 | [Facebook](https://developers.facebook.com/tools/playable-preview/) | Supported ✅ |
+| [Mintegral](https://www.playturbo.com/review/doc) | Supported ✅ |
 | [Unity Ads](https://docs.unity.com/acquire/en-us/manual/playable-ads-specifications) | Supported ✅ |
 | [AppLovin](https://p.applov.in/playablePreview?create=1) | Supported ✅ |
 | Moloco, Snapchat, etc | Not tested. Can be done on request ⏩ |

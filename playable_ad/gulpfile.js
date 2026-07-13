@@ -379,6 +379,24 @@ function removeRunningFromFileWarning() {
   });
 }
 
+function normalizeViewport() {
+  return through2.obj(function (file, _, cb) {
+    if (file.isBuffer()) {
+      const input = file.contents.toString();
+      const viewportPattern = /<meta\b(?=[^>]*\bname=["']viewport["'])[^>]*>/i;
+      const viewport = '<meta name="viewport" content="width=device-width,user-scalable=no,initial-scale=1.0,minimum-scale=1.0,maximum-scale=1.0">';
+
+      if (!viewportPattern.test(input)) {
+        cb(new Error("The generated HTML does not contain a viewport meta tag"));
+        return;
+      }
+
+      file.contents = Buffer.from(input.replace(viewportPattern, viewport));
+    }
+    cb(null, file);
+  });
+}
+
 function embedImages(dir) {
   return through2.obj(function (file, _, cb) {
     if (file.isBuffer()) {
@@ -493,6 +511,7 @@ function bundlePlayableAds() {
   const dir = bundleJsWebPath + "/" + projectTitle;
   return src(dir + "/index.html")
     .pipe(removeRunningFromFileWarning())
+    .pipe(normalizeViewport())
     .pipe(embedImages(dir))
     .pipe(embedJs(dir))
     .pipe(rename(sanitisedTitle + ".html"))

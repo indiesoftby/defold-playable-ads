@@ -79,8 +79,26 @@ local function call_to_action()
 end
 ```
 
-> [!NOTE]
-> If your ad is for Unity Ads, AppLovin and other MRAID compatible ad platforms, change the links to App Store and Google Play in game.project in the Playable Ads section. The values will be injected into the final HTML since playable ad testing tools of the ad platforms usually require these links to be directly in the html file.
+### Store URLs
+
+Set the iOS and Android destination URLs in your project's `game.project`:
+
+```ini
+[playable_ad]
+app_store_url = https://apps.apple.com/app/idYOUR_IOS_APP_ID
+google_play_url = https://play.google.com/store/apps/details?id=YOUR_ANDROID_PACKAGE
+```
+
+The build injects these values into the final HTML as
+`window.PlayableData.URL_IOS` and `window.PlayableData.URL_ANDROID`. MRAID
+networks use the URL selected from the device user agent when the CTA calls
+`mraid.open()`. The same values are used by the generic browser fallback.
+
+The plugin's defaults point to AppLovin's playable-preview applications so an
+example project can be tested immediately. **Replace both defaults before
+shipping a production creative.** Google `ExitApi`, Facebook `FbPlayableAd`,
+and Mintegral `window.install` normally use the destination configured in the
+ad network rather than these embedded fallback URLs.
 
 > [!TIP]
 > 99% of playable ad build time with the script presented here takes a build on the remote Defold extender server. And usually it is about 1-2 minutes! So we advise you to develop your ad as a normal game and be pleased with super fast desktop builds. And only when you are ready to upload the playable ad to the ad system, then run the playable ad build script.

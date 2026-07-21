@@ -182,6 +182,12 @@ gulp
 
 The resulting HTML file is located at `/playable_ad/build/output_wasm-web/YOUR_PROJECT_TITLE/YOUR_PROJECT_TITLE.html`.
 
+If a custom HTML template references packshot files named `logo.png` or
+`playnow.png`, put them in `/playable_ad/packshot`. The build copies any that
+exist into the intermediate bundle and then embeds their CSS `url(...)`
+references as Base64 data URIs. The packshot directory and either file are
+optional.
+
 ### Command Line Arguments
 
 You can pass the following arguments from the command line to the script:

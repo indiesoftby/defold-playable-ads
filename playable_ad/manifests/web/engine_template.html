@@ -4,7 +4,7 @@
     <script type="text/javascript" src="https://tpc.googlesyndication.com/pagead/gadgets/html5/api/exitapi.js"></script>
     <script data-src="fzstd.js" embed></script>
     <script>
-      // Base64 decoder. RFC 4648, but it doesn't support ending "=" (it is stripped by the gulp script)
+      // Base64 decoder. Supports RFC 4648 padding as well as older generated files where padding was stripped.
       var B64_codes = [
         255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255,
         255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 62,
@@ -13,23 +13,27 @@
         28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51,
       ];
       function B64_Len(str) {
-        return (3 * (str.length / 4)) | 0;
+        var padding = 0;
+        if (str.length > 0 && str.charCodeAt(str.length - 1) == 61) padding++;
+        if (str.length > 1 && str.charCodeAt(str.length - 2) == 61) padding++;
+        return ((3 * (str.length / 4)) | 0) - padding;
       }
       function B64_U8(str, from, len) {
+        from = from || 0;
         if (from && from % 3 != 0) throw "Inv `from`";
-        var n = str.length;
-        len = len || 3 * (n / 4);
-        var result = new Uint8Array(len | 0);
+        var available = B64_Len(str) - from;
+        len = len == null ? available : Math.min(len, available);
+        var result = new Uint8Array(len);
         // console.log("B64_U8", from, "(", from / 3 * 4, ")", len);
-        for (var i = from ? (from / 3) * 4 : 0, j = 0; j <= len; i += 4, j += 3) {
+        for (var i = (from / 3) * 4, j = 0; j < len; i += 4, j += 3) {
           var buffer =
             (B64_codes[str.charCodeAt(i)] << 18) |
             (B64_codes[str.charCodeAt(i + 1)] << 12) |
             (B64_codes[str.charCodeAt(i + 2)] << 6) |
             B64_codes[str.charCodeAt(i + 3)];
           result[j] = buffer >> 16;
-          result[j + 1] = (buffer >> 8) & 0xff;
-          result[j + 2] = buffer & 0xff;
+          if (j + 1 < len) result[j + 1] = (buffer >> 8) & 0xff;
+          if (j + 2 < len) result[j + 2] = buffer & 0xff;
         }
         return result;
       }

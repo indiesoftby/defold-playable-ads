@@ -304,8 +304,8 @@
           // Installing before the packshot is also considered the end of the playable.
           window.Playable.gameEnd();
 
-          // Prefer APIs injected by the current ad network. exitapi.js is bundled for
-          // Google builds, but can still be reachable when previewing on another network.
+          // Prefer APIs injected by the current ad network. exitapi.js is retained only
+          // in --admob builds, but another host may still provide a compatible ExitApi.
           if (typeof FbPlayableAd !== "undefined" && typeof FbPlayableAd.onCTAClick === "function") {
             FbPlayableAd.onCTAClick();
           } else if (typeof window.install === "function") {

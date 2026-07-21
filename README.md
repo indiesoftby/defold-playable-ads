@@ -190,7 +190,7 @@ You can pass the following arguments from the command line to the script:
 --architectures <arg>           Comma separated list of architectures to include: wasm-web.
 --embed-archive-js <arg>        Embed `_archive.js` file: true/false (default = true).
 --engine-sha1 <arg>             Set sha1 of a specific version of the engine to be used (stable version by default)
---mintegral                     Build for Mintegral without loading Google's external exitapi.js script.
+--admob                         Build for AdMob with Google's external exitapi.js script.
 
 # The following arguments passed to Bob.jar as is:
 --build-server <arg>            The build server (default = https://build.defold.com).
@@ -204,10 +204,10 @@ i.e. run `gulp --embed-archive-js=false` to build a playable ad with the two fil
 * `/playable_ad/build/output_wasm-web/YOUR_PROJECT_TITLE/YOUR_PROJECT_TITLE.html`
 * `/playable_ad/build/output_wasm-web/YOUR_PROJECT_TITLE/YOUR_PROJECT_TITLE_archive.js`
 
-For Mintegral, run `gulp --mintegral`. The resulting HTML keeps the shared
-`window.Playable` lifecycle and Mintegral's `gameReady`, `gameEnd`, `install`,
-and `gameRetry` calls, but omits Google's external `exitapi.js` reference so the
-creative remains self-contained. Do not use `--mintegral` for a Google Ads build.
+Standard builds omit Google's external `exitapi.js` reference and remain
+self-contained for Mintegral, Facebook, and MRAID-based networks. For AdMob,
+run `gulp --admob`; this retains the literal `exitapi.js` script required for
+`ExitApi.exit()`. Do not use `--admob` for other ad networks.
 
 ## License
 

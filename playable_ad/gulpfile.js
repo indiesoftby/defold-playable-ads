@@ -9,6 +9,7 @@ const playableAdDir = "playable_ad";
 const projectDir = "..";
 const buildDir = "build";
 const archiveDir = "archive";
+const packshotDir = "packshot";
 const bundleJsWebPath = buildDir + "/output_wasm-web";
 const buildSettingsPath = "build.settings";
 
@@ -69,16 +70,6 @@ function logFilesize(filename, type, size, maxSize) {
   fancyLog("* " + chalk.cyan(filename) + type + " size " + chalk.magenta(size + " B (" + prettyBytes(size) + ")"));
   if (maxSize && size > maxSize) {
     fancyLog("⚠️⚠️⚠️ The result exceeds " + prettyBytes(maxSize));
-  }
-}
-
-function stripBase64(b64) {
-  if (b64.endsWith("==")) {
-    return b64.substr(0, b64.length - 2);
-  } else if (b64.endsWith("=")) {
-    return b64.substr(0, b64.length - 1);
-  } else {
-    return b64;
   }
 }
 
@@ -330,7 +321,7 @@ function combineFilesToBase64(out) {
           cb(err);
           return;
         }
-        const compressed = stripBase64(Buffer.from(deflated).toString("base64"));
+        const compressed = Buffer.from(deflated).toString("base64");
         combinedFiles[archiveFilename] = [fileContents.length, compressed];
         logFilesize(archiveFilename, " zstd + base64 encoded", compressed.length);
         cb();
@@ -352,6 +343,24 @@ function combineFilesToBase64(out) {
 function copyFzstd() {
   const dir = bundleJsWebPath + "/" + projectTitle;
   return src("node_modules/fzstd/umd/index.js").pipe(rename("fzstd.js")).pipe(dest(dir));
+}
+
+function copyPackshot(cb) {
+  const files = ["logo.png", "playnow.png"];
+  const existing = files.filter(function (filename) {
+    return fs.existsSync(packshotDir + "/" + filename);
+  });
+
+  if (existing.length == 0) {
+    fancyLog("* No packshot assets in " + chalk.cyan(packshotDir) + " — skipping");
+    cb();
+    return;
+  }
+
+  const dir = bundleJsWebPath + "/" + projectTitle;
+  return src(existing.map(function (filename) {
+    return packshotDir + "/" + filename;
+  })).pipe(dest(dir));
 }
 
 function bundleArchiveJs() {
@@ -498,7 +507,7 @@ function embedJs(dir) {
                 cb(err);
                 return;
               }
-              const compressed = stripBase64(Buffer.from(zstdOutput).toString("base64"));
+              const compressed = Buffer.from(zstdOutput).toString("base64");
               const replacement = "<script>eval(Zstd_DecStr('" + compressed + "'));</script>";
               output = output.split(match.searchMatch).join(replacement);
               logFilesize(match.filename, " zstd + base64 encoded", replacement.length);
@@ -563,6 +572,7 @@ exports.default = series(
   checkBobJar,
   buildGame,
   copyFzstd,
+  copyPackshot,
   bundleArchiveJs,
   bundlePlayableAds
 );

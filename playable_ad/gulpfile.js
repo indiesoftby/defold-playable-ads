@@ -46,12 +46,12 @@ const Vinyl = require("vinyl");
 //
 
 const knownOptions = {
-  boolean: ["embed-archive-js", "mintegral"],
+  boolean: ["embed-archive-js", "admob"],
   string: ["architectures", "build-server", "settings", "variant", "texture-compression", "engine-sha1"],
   default: {
     architectures: "wasm-web",
     "embed-archive-js": true,
-    mintegral: false,
+    admob: false,
     "build-server": "https://build.defold.com",
     "texture-compression": "true",
     variant: "release",
@@ -382,15 +382,19 @@ function removeRunningFromFileWarning() {
 
 function configureAdNetwork() {
   return through2.obj(function (file, _, cb) {
-    if (file.isBuffer() && options.mintegral) {
+    if (file.isBuffer()) {
       const input = file.contents.toString();
       const exitApiPattern = /<script\b[^>]*\bsrc=["']https:\/\/tpc\.googlesyndication\.com\/pagead\/gadgets\/html5\/api\/exitapi\.js["'][^>]*>\s*<\/script>/i;
       if (!exitApiPattern.test(input)) {
         cb(new Error("The generated HTML does not contain the Google Exit API script"));
         return;
       }
-      file.contents = Buffer.from(input.replace(exitApiPattern, ""));
-      fancyLog("* Mintegral build: removed the Google Exit API script");
+      if (!options.admob) {
+        file.contents = Buffer.from(input.replace(exitApiPattern, ""));
+        fancyLog("* Standard build: removed the Google Exit API script");
+      } else {
+        fancyLog("* AdMob build: retained the Google Exit API script");
+      }
     }
     cb(null, file);
   });
